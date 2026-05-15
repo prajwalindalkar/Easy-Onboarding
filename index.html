@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>PhonePe Merchant Document Generator</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -116,6 +117,21 @@ select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
 .page.active{display:block}
 .btn-clr-data{background:none;border:1px solid rgba(255,255,255,.5);color:#fff;border-radius:var(--radius-sm);padding:5px 10px;font-size:11px;cursor:pointer;font-weight:700}
 hr.dv{border:none;border-top:1px solid var(--border);margin:10px 0}
+.kyc-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.kyc-btn{position:relative;border:2px dashed var(--brand-mid);border-radius:var(--radius-sm);padding:14px 8px;text-align:center;cursor:pointer;background:var(--brand-light);transition:all .2s;overflow:hidden}
+.kyc-btn:hover{border-color:var(--brand);background:#e8d8f7}
+.kyc-btn input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:2}
+.kyc-btn .kico{font-size:22px;display:block;margin-bottom:4px}
+.kyc-btn .klbl{font-size:11px;font-weight:700;color:var(--brand);display:block}
+.kyc-btn .ksub{font-size:10px;color:var(--text-muted);display:block;margin-top:2px}
+.kyc-ack{margin-top:6px;padding:7px 10px;border-radius:var(--radius-sm);font-size:11px;font-weight:600;display:none;align-items:center;gap:6px;line-height:1.4}
+.kyc-ack.uploading{display:flex;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+.kyc-ack.scanning{display:flex;background:var(--warn-light);color:#92400e;border:1px solid #fcd34d}
+.kyc-ack.done{display:flex;background:var(--accent-light);color:var(--accent);border:1px solid #b7deca}
+.kyc-ack.err{display:flex;background:var(--danger-light);color:var(--danger);border:1px solid #f5c2be}
+.kyc-thumb{width:100%;max-height:80px;object-fit:contain;border-radius:4px;border:1px solid var(--border);margin-top:6px;display:none;background:#f5f5f5}
+.pcard-scan{background:var(--bg);border-bottom:1px solid var(--border);padding:10px 11px}
+.pcard-fields{padding:11px}
 </style>
 </head>
 <body>
@@ -224,28 +240,12 @@ hr.dv{border:none;border-top:1px solid var(--border);margin:10px 0}
 
 <!-- STEP 2 -->
 <div class="page" id="page1">
-  <div class="scan-note">⚠️ <strong>Agent: After scanning, verify all auto-filled details are correct before proceeding.</strong> AI extraction may not be perfect — always check name, PAN, DOB, and address.</div>
-
+  <div class="scan-note">⚠️ <strong>Agent: Upload PAN + Aadhaar for each partner separately. Always verify auto-filled details before proceeding.</strong></div>
   <div class="sec">
-    <div class="sec-hdr"><div class="sec-icon">📷</div><div><h2>Scan PAN &amp; Aadhaar Cards</h2><p>AI reads and fills partner details automatically</p></div></div>
-    <div class="sec-body">
-      <div class="field">
-        <label class="lbl">Upload PAN Card Photos (one per partner)</label>
-        <div class="upzone"><input type="file" id="panInput" accept="image/*" multiple onchange="scanKYC(event,'pan')"><div class="uico">🪪</div><p>Tap to upload PAN cards</p><small>Select multiple files for multiple partners</small></div>
-      </div>
-      <div class="field">
-        <label class="lbl">Upload Aadhaar Card Photos (front side)</label>
-        <div class="upzone"><input type="file" id="aadInput" accept="image/*" multiple onchange="scanKYC(event,'aad')"><div class="uico">🪪</div><p>Tap to upload Aadhaar cards</p><small>Front side only · one per partner</small></div>
-      </div>
-      <div id="scanSt" class="gst-st" style="margin-top:8px"></div>
-    </div>
-  </div>
-
-  <div class="sec">
-    <div class="sec-hdr"><div class="sec-icon">👥</div><div><h2>Partner Details</h2><p>Auto-filled from scans · edit any field if wrong</p></div></div>
+    <div class="sec-hdr"><div class="sec-icon">👥</div><div><h2>Partners</h2><p>One card per partner · upload docs to auto-fill</p></div></div>
     <div class="sec-body">
       <div id="partnerList"></div>
-      <button class="btn-add" onclick="addPartner()">+ Add Partner Manually</button>
+      <button class="btn-add" onclick="addPartner()">+ Add Another Partner</button>
     </div>
   </div>
 </div>
@@ -518,87 +518,167 @@ function togPrincipal(cb){
 }
 
 // ═══════════════════════════════════════
-// KYC SCAN via Claude API
-// ═══════════════════════════════════════
-async function scanKYC(e,type){
-  const files=Array.from(e.target.files);
-  if(!files.length)return;
-  const stEl=document.getElementById('scanSt');
-  stEl.className='gst-st inf';stEl.style.display='flex';
-  stEl.textContent='⏳ Scanning '+files.length+' '+type.toUpperCase()+' card'+(files.length>1?'s':'')+'...';
-
-  for(let i=0;i<files.length;i++){
-    stEl.textContent='⏳ Scanning card '+(i+1)+' of '+files.length+'...';
-    try{
-      const b64=await toB64(files[i]);
-      const mime=files[i].type||'image/jpeg';
-      const prompt=type==='pan'
-        ?'This is an Indian PAN card image. Extract: full name, PAN number (format ABCDE1234F), date of birth. Return ONLY valid JSON: {"name":"","pan":"","dob":"YYYY-MM-DD"}. If field unclear use empty string. No other text.'
-        :'This is an Indian Aadhaar card front image. Extract: full name, date of birth, full address, pincode, gender. Return ONLY valid JSON: {"name":"","dob":"YYYY-MM-DD","address":"","pin":"","gender":""}. If field unclear use empty string. No other text.';
-
-      const resp=await fetch('https://api.anthropic.com/v1/messages',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          model:'claude-sonnet-4-20250514',
-          max_tokens:500,
-          messages:[{role:'user',content:[
-            {type:'image',source:{type:'base64',media_type:mime,data:b64}},
-            {type:'text',text:prompt}
-          ]}]
-        })
-      });
-      const data=await resp.json();
-      const raw=data.content&&data.content[0]?data.content[0].text:'';
-      let parsed; try{parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch(e){parsed=null;}
-      if(parsed&&parsed.name){
-        mergeKYC(parsed,type,i);
-        stEl.className='gst-st ok';stEl.textContent='✅ Card '+(i+1)+' scanned successfully.';
-      } else {
-        stEl.className='gst-st err';stEl.textContent='⚠️ Card '+(i+1)+': could not read clearly. Please fill manually.';
-      }
-    }catch(err){
-      stEl.className='gst-st err';stEl.textContent='⚠️ Error scanning card '+(i+1)+'. Please fill manually.';
-    }
-  }
-  stEl.className='gst-st ok';
-  stEl.textContent='✅ Scan complete. Please verify all details below carefully.';
-  renderPartners();saveS();
-}
-
-function mergeKYC(d,type,idx){
-  while(S.partners.length<=idx){addPartner(true);}
-  const p=S.partners[idx];
-  if(type==='pan'){
-    if(d.name)p.name=d.name;
-    if(d.pan)p.pan=d.pan.toUpperCase();
-    if(d.dob)p.dob=d.dob;
-  } else {
-    if(d.name&&!p.name)p.name=d.name;
-    if(d.dob&&!p.dob)p.dob=d.dob;
-    if(d.address)p.address=d.address;
-    if(d.pin)p.pin=d.pin;
-    if(d.gender)p.gender=d.gender;
-  }
-}
-
-function toB64(file){
-  return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=()=>rej(new Error('read fail'));r.readAsDataURL(file);});
-}
-
-// ═══════════════════════════════════════
-// PARTNERS
+// TESSERACT OCR — PER PARTNER
 // ═══════════════════════════════════════
 let _pid=0;
+let tesseractWorker=null;
+
+async function getTesseract(){
+  if(tesseractWorker) return tesseractWorker;
+  tesseractWorker = await Tesseract.createWorker('eng',1,{
+    logger: ()=>{}
+  });
+  return tesseractWorker;
+}
+
 function addPartner(silent){
   _pid++;
-  S.partners.push({id:_pid,name:'',pan:'',dob:'',address:'',pin:'',nationality:'Indian',din:'',ovd:'Voter ID',ownership:'',designation:'Partner',gender:''});
+  S.partners.push({id:_pid,name:'',pan:'',dob:'',address:'',pin:'',nationality:'Indian',din:'',ovd:'Voter ID',ownership:'',designation:'Partner',gender:'',panUploaded:false,aadUploaded:false});
   if(!silent){renderPartners();saveS();}
 }
 
 function removePartner(id){S.partners=S.partners.filter(p=>p.id!==id);renderPartners();saveS();}
 
-function setP(id,k,v){const p=S.partners.find(x=>x.id===id);if(p){p[k]=v;saveS();if(k==='name'){const sp=document.getElementById('ph'+id);if(sp)sp.textContent='Partner '+(S.partners.findIndex(x=>x.id===id)+1)+(v?' — '+v:'');}}}
+function setP(id,k,v){
+  const p=S.partners.find(x=>x.id===id);
+  if(p){
+    p[k]=v;saveS();
+    if(k==='name'){const sp=document.getElementById('ph'+id);if(sp)sp.textContent='Partner '+(S.partners.findIndex(x=>x.id===id)+1)+(v?' — '+v:'');}
+  }
+}
+
+function ack(id,docType,state,msg){
+  const el=document.getElementById('ack_'+id+'_'+docType);
+  if(!el)return;
+  el.className='kyc-ack '+state;
+  el.innerHTML=msg;
+  el.style.display=state?'flex':'none';
+}
+
+function showThumb(id,docType,dataUrl){
+  const el=document.getElementById('thumb_'+id+'_'+docType);
+  if(el){el.src=dataUrl;el.style.display='block';}
+}
+
+async function handleKYCUpload(inputEl, pid, docType){
+  const file = inputEl.files[0];
+  if(!file) return;
+  const p=S.partners.find(x=>x.id===pid);
+  if(!p) return;
+
+  // Show upload acknowledged
+  ack(pid,docType,'uploading','⬆️ '+file.name+' uploaded · Reading...');
+  const dataUrl = await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);});
+  showThumb(pid,docType,dataUrl);
+  ack(pid,docType,'scanning','🔍 Scanning '+docType.toUpperCase()+' card with OCR...');
+
+  try{
+    const worker = await getTesseract();
+    const {data:{text}} = await worker.recognize(dataUrl);
+    const extracted = docType==='pan' ? parsePAN(text) : parseAadhaar(text);
+
+    if(docType==='pan'){
+      if(extracted.name){p.name=extracted.name; const ni=document.getElementById('pi_'+pid+'_name');if(ni)ni.value=p.name;}
+      if(extracted.pan){p.pan=extracted.pan; const pi=document.getElementById('pi_'+pid+'_pan');if(pi)pi.value=p.pan;}
+      if(extracted.dob){p.dob=extracted.dob; const di=document.getElementById('pi_'+pid+'_dob');if(di)di.value=p.dob;}
+      p.panUploaded=true;
+      const filled=[];
+      if(extracted.name)filled.push('Name');
+      if(extracted.pan)filled.push('PAN');
+      if(extracted.dob)filled.push('DOB');
+      if(filled.length>0){
+        ack(pid,'pan','done','✅ PAN scanned · Filled: '+filled.join(', ')+' · <strong>Please verify below ↓</strong>');
+      } else {
+        ack(pid,'pan','err','⚠️ PAN uploaded but text unclear · Please fill name, PAN, DOB manually below ↓');
+      }
+      // Update header
+      const hdr=document.getElementById('ph'+pid);
+      if(hdr&&p.name)hdr.textContent='Partner '+(S.partners.findIndex(x=>x.id===pid)+1)+' — '+p.name;
+    } else {
+      if(extracted.name&&!p.name){p.name=extracted.name;const ni=document.getElementById('pi_'+pid+'_name');if(ni)ni.value=p.name;}
+      if(extracted.dob&&!p.dob){p.dob=extracted.dob;const di=document.getElementById('pi_'+pid+'_dob');if(di)di.value=p.dob;}
+      if(extracted.address){p.address=extracted.address;const ai=document.getElementById('pi_'+pid+'_address');if(ai)ai.value=p.address;}
+      if(extracted.pin){p.pin=extracted.pin;const pi=document.getElementById('pi_'+pid+'_pin');if(pi)pi.value=p.pin;}
+      p.aadUploaded=true;
+      const filled=[];
+      if(extracted.address)filled.push('Address');
+      if(extracted.pin)filled.push('PIN');
+      if(extracted.dob)filled.push('DOB');
+      if(filled.length>0){
+        ack(pid,'aad','done','✅ Aadhaar scanned · Filled: '+filled.join(', ')+' · <strong>Please verify below ↓</strong>');
+      } else {
+        ack(pid,'aad','err','⚠️ Aadhaar uploaded but text unclear · Please fill address and PIN manually below ↓');
+      }
+    }
+    saveS();
+  } catch(err){
+    ack(pid,docType,'err','❌ OCR failed · Please fill details manually below ↓');
+    console.error('OCR error:',err);
+  }
+}
+
+function parsePAN(text){
+  const result={name:'',pan:'',dob:''};
+  const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);
+  // PAN number — format ABCDE1234F
+  const panMatch=text.match(/[A-Z]{5}[0-9]{4}[A-Z]{1}/);
+  if(panMatch) result.pan=panMatch[0];
+  // DOB — DD/MM/YYYY or DD-MM-YYYY
+  const dobMatch=text.match(/\b(\d{2}[\/-]\d{2}[\/-]\d{4})\b/);
+  if(dobMatch){
+    const parts=dobMatch[1].split(/[\/-]/);
+    if(parts.length===3) result.dob=parts[2]+'-'+parts[1]+'-'+parts[0]; // YYYY-MM-DD
+  }
+  // Name — usually all caps line, not containing numbers, not "INCOME TAX" etc
+  const skipWords=['INCOME','TAX','DEPARTMENT','GOVT','INDIA','PERMANENT','ACCOUNT','NUMBER','CARD','DATE','BIRTH','FATHER','NAME','OF','PAN'];
+  for(const line of lines){
+    if(line.length<3) continue;
+    if(/\d/.test(line)) continue; // skip lines with numbers
+    const upper=line.toUpperCase();
+    if(skipWords.some(w=>upper.includes(w))) continue;
+    if(/^[A-Z\s\.]+$/.test(upper) && upper.length>3){
+      result.name=line.replace(/[^a-zA-Z\s\.]/g,'').trim();
+      break;
+    }
+  }
+  return result;
+}
+
+function parseAadhaar(text){
+  const result={name:'',dob:'',address:'',pin:''};
+  const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);
+  // PIN — 6 consecutive digits
+  const pinMatch=text.match(/\b(\d{6})\b/);
+  if(pinMatch) result.pin=pinMatch[1];
+  // DOB
+  const dobMatch=text.match(/\b(\d{2}[\/-]\d{2}[\/-]\d{4})\b/);
+  if(dobMatch){
+    const parts=dobMatch[1].split(/[\/-]/);
+    if(parts.length===3) result.dob=parts[2]+'-'+parts[1]+'-'+parts[0];
+  }
+  // Name — first all-caps or title-case line without numbers
+  const skipWords=['GOVERNMENT','INDIA','UNIQUE','AADHAAR','AUTHORITY','ENROLLMENT','DATE','BIRTH','DOB','MALE','FEMALE','VID'];
+  for(const line of lines){
+    if(line.length<3||/\d/.test(line)) continue;
+    const upper=line.toUpperCase();
+    if(skipWords.some(w=>upper.includes(w))) continue;
+    if(line.length>3 && /^[A-Za-z\s\.]+$/.test(line)){
+      result.name=line.trim(); break;
+    }
+  }
+  // Address — collect lines after "Address" keyword or lines containing road/nagar/dist keywords
+  const addrKeywords=['nagar','road','street','dist','village','taluk','state','po','house','flat','plot','near','behind','opposite','ward'];
+  let addrLines=[];
+  let inAddr=false;
+  for(const line of lines){
+    if(/address/i.test(line)){inAddr=true;continue;}
+    if(inAddr&&line.length>3) addrLines.push(line);
+    else if(!inAddr && addrKeywords.some(k=>line.toLowerCase().includes(k))) addrLines.push(line);
+    if(addrLines.length>=4) break;
+  }
+  if(addrLines.length>0) result.address=addrLines.join(', ');
+  return result;
+}
 
 function renderPartners(){
   const list=document.getElementById('partnerList');
@@ -612,39 +692,70 @@ function renderPartners(){
         <span id="ph${p.id}">Partner ${idx+1}${p.name?' — '+esc(p.name):''}</span>
         <button class="btn-rem" onclick="event.stopPropagation();removePartner(${p.id})">Remove</button>
       </div>
-      <div class="pcard-body" id="pb${p.id}">
-        <div class="field"><label class="lbl">Full Name (as per PAN) <span class="req">*</span></label>
-          <input type="text" value="${esc(p.name)}" placeholder="Full name" oninput="setP(${p.id},'name',this.value)"></div>
-        <div class="row2">
-          <div class="field"><label class="lbl">PAN Number <span class="req">*</span></label>
-            <input type="text" value="${esc(p.pan)}" placeholder="ABCDE1234F" maxlength="10" style="text-transform:uppercase" oninput="setP(${p.id},'pan',this.value.toUpperCase())"></div>
-          <div class="field"><label class="lbl">Date of Birth <span class="req">*</span></label>
-            <input type="date" value="${esc(p.dob)}" onchange="setP(${p.id},'dob',this.value)"></div>
+      <div id="pb${p.id}">
+        <div class="pcard-scan">
+          <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">Upload Documents to Auto-fill</div>
+          <div class="kyc-row">
+            <div>
+              <div class="kyc-btn">
+                <input type="file" accept="image/*" capture="environment" onchange="handleKYCUpload(this,${p.id},'pan')">
+                <span class="kico">🪪</span>
+                <span class="klbl">PAN Card</span>
+                <span class="ksub">Tap to upload</span>
+              </div>
+              <img class="kyc-thumb" id="thumb_${p.id}_pan" src="" alt="PAN preview">
+              <div class="kyc-ack" id="ack_${p.id}_pan">${p.panUploaded?'✅ PAN already uploaded · Re-upload to re-scan':''}</div>
+            </div>
+            <div>
+              <div class="kyc-btn">
+                <input type="file" accept="image/*" capture="environment" onchange="handleKYCUpload(this,${p.id},'aad')">
+                <span class="kico">🪪</span>
+                <span class="klbl">Aadhaar Card</span>
+                <span class="ksub">Front side only</span>
+              </div>
+              <img class="kyc-thumb" id="thumb_${p.id}_aad" src="" alt="Aadhaar preview">
+              <div class="kyc-ack" id="ack_${p.id}_aad">${p.aadUploaded?'✅ Aadhaar already uploaded · Re-upload to re-scan':''}</div>
+            </div>
+          </div>
         </div>
-        <div class="field"><label class="lbl">Residential Address <span class="req">*</span></label>
-          <textarea oninput="setP(${p.id},'address',this.value)">${esc(p.address)}</textarea></div>
-        <div class="row2">
-          <div class="field"><label class="lbl">PIN Code <span class="req">*</span></label>
-            <input type="text" value="${esc(p.pin)}" placeholder="6-digit PIN" maxlength="6" oninput="setP(${p.id},'pin',this.value)"></div>
-          <div class="field"><label class="lbl">Nationality</label>
-            <input type="text" value="${esc(p.nationality||'Indian')}" oninput="setP(${p.id},'nationality',this.value)"></div>
-        </div>
-        <div class="row2">
-          <div class="field"><label class="lbl">OVD / Address Proof</label>
-            <select onchange="setP(${p.id},'ovd',this.value)">
-              ${['Voter ID','Driving Licence','Passport','Aadhaar Card'].map(o=>`<option value="${o}"${p.ovd===o?' selected':''}>${o}</option>`).join('')}
-            </select></div>
-          <div class="field"><label class="lbl">DIN (if applicable)</label>
-            <input type="text" value="${esc(p.din)}" placeholder="N/A if not applicable" oninput="setP(${p.id},'din',this.value)"></div>
-        </div>
-        <div class="row2">
-          <div class="field"><label class="lbl">% Ownership <span class="req">*</span></label>
-            <input type="text" value="${esc(p.ownership)}" placeholder="e.g. 33.33" oninput="setP(${p.id},'ownership',this.value)"></div>
-          <div class="field"><label class="lbl">Designation / BO Type</label>
-            <input type="text" value="${esc(p.designation||'Partner')}" oninput="setP(${p.id},'designation',this.value)"></div>
+        <div class="pcard-fields">
+          <div style="font-size:11px;font-weight:700;color:var(--warn);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">⚠️ Verify all details below</div>
+          <div class="field"><label class="lbl">Full Name (as per PAN) <span class="req">*</span></label>
+            <input type="text" id="pi_${p.id}_name" value="${esc(p.name)}" placeholder="Full name" oninput="setP(${p.id},'name',this.value)"></div>
+          <div class="row2">
+            <div class="field"><label class="lbl">PAN Number <span class="req">*</span></label>
+              <input type="text" id="pi_${p.id}_pan" value="${esc(p.pan)}" placeholder="ABCDE1234F" maxlength="10" style="text-transform:uppercase" oninput="setP(${p.id},'pan',this.value.toUpperCase())"></div>
+            <div class="field"><label class="lbl">Date of Birth <span class="req">*</span></label>
+              <input type="date" id="pi_${p.id}_dob" value="${esc(p.dob)}" onchange="setP(${p.id},'dob',this.value)"></div>
+          </div>
+          <div class="field"><label class="lbl">Residential Address <span class="req">*</span></label>
+            <textarea id="pi_${p.id}_address" oninput="setP(${p.id},'address',this.value)">${esc(p.address)}</textarea></div>
+          <div class="row2">
+            <div class="field"><label class="lbl">PIN Code <span class="req">*</span></label>
+              <input type="text" id="pi_${p.id}_pin" value="${esc(p.pin)}" placeholder="6-digit PIN" maxlength="6" oninput="setP(${p.id},'pin',this.value)"></div>
+            <div class="field"><label class="lbl">Nationality</label>
+              <input type="text" id="pi_${p.id}_nat" value="${esc(p.nationality||'Indian')}" oninput="setP(${p.id},'nationality',this.value)"></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label class="lbl">OVD / Address Proof</label>
+              <select onchange="setP(${p.id},'ovd',this.value)">
+                ${['Voter ID','Driving Licence','Passport','Aadhaar Card'].map(o=>`<option value="${o}"${p.ovd===o?' selected':''}>${o}</option>`).join('')}
+              </select></div>
+            <div class="field"><label class="lbl">DIN (if applicable)</label>
+              <input type="text" value="${esc(p.din)}" placeholder="N/A" oninput="setP(${p.id},'din',this.value)"></div>
+          </div>
+          <div class="row2">
+            <div class="field"><label class="lbl">% Ownership <span class="req">*</span></label>
+              <input type="text" value="${esc(p.ownership)}" placeholder="e.g. 33.33" oninput="setP(${p.id},'ownership',this.value)"></div>
+            <div class="field"><label class="lbl">Designation</label>
+              <input type="text" value="${esc(p.designation||'Partner')}" oninput="setP(${p.id},'designation',this.value)"></div>
+          </div>
         </div>
       </div>`;
     list.appendChild(d);
+    // Show ack banners if already uploaded
+    if(p.panUploaded){const el=document.getElementById('ack_'+p.id+'_pan');if(el){el.className='kyc-ack done';el.style.display='flex';}}
+    if(p.aadUploaded){const el=document.getElementById('ack_'+p.id+'_aad');if(el){el.className='kyc-ack done';el.style.display='flex';}}
   });
 }
 
