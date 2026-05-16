@@ -142,17 +142,14 @@ hr.dv{border:none;border-top:1px solid var(--br);margin:10px 0}
 <!-- ══ STEP 1: FIRM ══ -->
 <div class="page active" id="page0">
   <div class="sec">
-    <div class="sh"><div class="si">🔍</div><div><h2>GST Auto-Fill</h2><p>Enter GSTIN to fetch firm name &amp; address</p></div></div>
+    <div class="sh"><div class="si">🔍</div><div><h2>GSTIN</h2><p>For reference — saved on the document</p></div></div>
     <div class="sb">
       <div class="f">
-        <label class="lbl">GSTIN</label>
-        <div class="gst-row">
-          <input type="text" id="gstin" placeholder="e.g. 27AAAAA0000A1Z5" maxlength="15" oninput="this.value=this.value.toUpperCase();sv('gstin',this.value)">
-          <button class="blkp" id="btnGST" onclick="doGST()">Fetch →</button>
-        </div>
-        <div class="gst-st" id="gstSt"></div>
+        <label class="lbl">GSTIN (optional)</label>
+        <input type="text" id="gstin" placeholder="e.g. 27AAAAA0000A1Z5" maxlength="15" oninput="this.value=this.value.toUpperCase();sv('gstin',this.value)">
       </div>
     </div>
+  </div>
   </div>
 
   <div class="sec">
@@ -341,7 +338,7 @@ let S={
   deedDate:'',meetDate:'',meetTime:'',meetLoc:'',boDate:'',
   agentName:'',authP:'',boOwn:'yes',boCat:'1',
   partners:[],presentNames:[],decSignNames:[],boSignNames:[],
-  lhData:null,mTop:60,mLeft:20,mRight:20,mBot:20,step:0
+  lhData:null,lhAspect:0,mTop:60,mLeft:20,mRight:20,mBot:20,step:0
 };
 function loadS(){try{const d=localStorage.getItem(SK);if(d)S={...S,...JSON.parse(d)};}catch(e){}}
 function saveS(){try{localStorage.setItem(SK,JSON.stringify(S));}catch(e){}}
@@ -400,7 +397,7 @@ function validate(){
     const fs=['firmName','regAddr','deedDate','meetDate','meetTime','meetLoc','boDate','agentName'];
     let ok=true;
     fs.forEach(id=>{const el=document.getElementById(id);if(!el)return;if(!el.value.trim()){el.classList.add('inv');ok=false;}else el.classList.remove('inv');});
-    if(!ok){document.querySelector('.inv')?.scrollIntoView({block:'center',behavior:'smooth'});return false;}
+    if(!ok){const inv=document.querySelector('.inv');if(inv)inv.scrollIntoView({block:'center',behavior:'smooth'});return false;}
   }
   if(s===1){
     if(S.partners.length===0){alert('Add at least one partner.');return false;}
@@ -408,37 +405,13 @@ function validate(){
   }
   if(s===2){
     if(!S.authP){alert('Select the authorised signatory.');return false;}
-    if(!S.presentNames?.length){alert('Select partners present at meeting.');return false;}
-    if(!S.decSignNames?.length){alert('Select declaration signatories.');return false;}
-    if(!S.boSignNames?.length){alert('Select BO declaration signatories.');return false;}
+    if(!S.presentNames && S.presentNames.length){alert('Select partners present at meeting.');return false;}
+    if(!S.decSignNames && S.decSignNames.length){alert('Select declaration signatories.');return false;}
+    if(!S.boSignNames && S.boSignNames.length){alert('Select BO declaration signatories.');return false;}
   }
   if(s===3){if(!S.lhData){alert('Upload the merchant letterhead.');return false;}}
   return true;
 }
-
-// ═══ GST ═══════════════════════════════════════════════════
-async function doGST(){
-  const g=document.getElementById('gstin').value.trim().toUpperCase();
-  if(!g||g.length!==15){gstSt('err','❌ Enter a valid 15-character GSTIN');return;}
-  const btn=document.getElementById('btnGST');btn.disabled=true;btn.textContent='...';
-  gstSt('inf','⏳ Fetching from GST portal...');
-  try{
-    const url='https://api.allorigins.win/raw?url='+encodeURIComponent('https://services.gst.gov.in/services/api/search/taxpayerDetails?gstin='+g);
-    const r=await fetch(url,{signal:AbortSignal.timeout(9000)});
-    const t=await r.text();let d;try{d=JSON.parse(t);}catch(e){d=null;}
-    const data=d?.data||d;
-    if(data?.lgnm){
-      const nm=data.lgnm||data.tradeNam||'';
-      const addr=(data.pradr?.adr)||'';
-      if(nm){document.getElementById('firmName').value=nm;sv('firmName',nm);}
-      if(addr){document.getElementById('regAddr').value=addr;sv('regAddr',addr);}
-      gstSt('ok','✅ Filled from GST portal · Status: '+(data.sts||'Active')+' · Edit any field if needed.');
-    } else {gstSt('err','⚠️ Not found · Fill firm name and address manually below.');}
-  }catch(e){gstSt('err','⚠️ GST portal unreachable · Fill manually below.');}
-  btn.disabled=false;btn.textContent='Fetch →';
-}
-function gstSt(t,m){const el=document.getElementById('gstSt');el.className='gst-st '+(t||'');el.textContent=m;el.style.display=m&&t?'flex':'none';}
-
 function togP(cb){
   S.sameP=cb.checked;
   const pa=document.getElementById('prinAddr');
@@ -532,41 +505,13 @@ function renderCL(cid,names,sel,sk){
 }
 
 // ═══ LETTERHEAD & LIVE PREVIEW ═════════════════════════════
-function handleLH(e){
-  const file=e.target.files[0];if(!file)return;
-  const r=new FileReader();
-  r.onload=ev=>{
-    S.lhData=ev.target.result;saveS();
-    document.getElementById('lhImg').src=S.lhData;
-    document.getElementById('lhName').textContent=file.name+' · '+(file.size/1024).toFixed(0)+' KB';
-    document.getElementById('lhPrev').style.display='block';
-    document.getElementById('marginSec').style.display='block';
-    autoDetectTop();
-  };
-  r.readAsDataURL(file);
-}
 function clearLH(){
   S.lhData=null;saveS();
   document.getElementById('lhInput').value='';
   document.getElementById('lhPrev').style.display='none';
   document.getElementById('marginSec').style.display='none';
 }
-
-function autoDetectTop(){
-  // Load image, measure its natural height vs width to estimate letterhead height in mm
-  const img=new Image();
-  img.onload=()=>{
-    // A4 page is 210mm wide, 297mm tall
-    // The letterhead image displayed on A4 will be 210mm wide
-    // Its height in mm = (img.naturalHeight / img.naturalWidth) * 210
-    const lhHeightMM=Math.round((img.naturalHeight/img.naturalWidth)*210);
-    // Add small padding (5mm) below letterhead
-    const top=Math.min(140,Math.max(15,lhHeightMM+5));
-    S.mTop=top;saveS();
-    document.getElementById('mTop').value=top;
-    document.getElementById('mTopV').textContent=top+'mm';
-    drawMiniPreview();
-  };
+;
   img.src=S.lhData;
 }
 
