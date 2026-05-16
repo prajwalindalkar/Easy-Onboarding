@@ -2,937 +2,1902 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>PhonePe Merchant Docs</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PhonePe Merchant Document Generator</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--pu:#5A2D82;--pl:#f0eaf8;--pm:#c9a8e8;--gn:#1B7F4F;--gl:#e6f4ed;--rd:#c0392b;--rl:#fdecea;--yw:#d97706;--yl:#fef3c7;--br:#e2e0e7;--bs:#c8c4d2;--bg:#f7f5fb;--wh:#fff;--tx:#1a1523;--tm:#6b6478}
-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;background:var(--bg);color:var(--tx);font-size:15px;line-height:1.5}
-.hdr{background:var(--pu);color:#fff;padding:.875rem 1.25rem;position:sticky;top:0;z-index:100;display:flex;justify-content:space-between;align-items:center}
-.hdr h1{font-size:16px;font-weight:700}.hdr p{font-size:11px;opacity:.75}
-.btnclr{background:none;border:1px solid rgba(255,255,255,.5);color:#fff;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-weight:700}
-.prg{background:var(--wh);border-bottom:1px solid var(--br);padding:.625rem 1.25rem;position:sticky;top:62px;z-index:99}
-.steps{display:flex;gap:3px;align-items:center}
-.sd{width:26px;height:26px;border-radius:50%;border:2px solid var(--bs);background:var(--wh);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#9d97a8;cursor:pointer;flex-shrink:0;transition:all .2s}
-.sd.active{background:var(--pu);border-color:var(--pu);color:#fff}
-.sd.done{background:var(--gn);border-color:var(--gn);color:#fff}
-.sl{flex:1;height:2px;background:var(--br);border-radius:2px}.sl.done{background:var(--gn)}
-.slbl{font-size:10px;color:var(--tm);margin-top:5px}
-.main{padding:.875rem 1.125rem 7rem;max-width:640px;margin:0 auto}
-.sec{background:var(--wh);border:1px solid var(--br);border-radius:10px;margin-bottom:.875rem;overflow:hidden;box-shadow:0 1px 4px rgba(90,45,130,.08)}
-.sh{padding:.75rem 1rem;background:var(--pl);border-bottom:1px solid var(--br);display:flex;align-items:center;gap:10px}
-.si{width:30px;height:30px;background:var(--pu);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:15px;color:#fff}
-.sh h2{font-size:13px;font-weight:700;color:var(--pu)}.sh p{font-size:11px;color:var(--tm)}
-.sb{padding:.875rem 1rem}
-.f{margin-bottom:.75rem}.f:last-child{margin-bottom:0}
-.lbl{display:block;font-size:11px;font-weight:700;color:var(--tm);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
-.req{color:var(--rd);margin-left:2px}
-input,select,textarea{width:100%;padding:9px 11px;border:1px solid var(--bs);border-radius:6px;font-size:14px;color:var(--tx);background:var(--wh);-webkit-appearance:none;outline:none;transition:border-color .15s;font-family:inherit}
-input:focus,select:focus,textarea:focus{border-color:var(--pu);box-shadow:0 0 0 3px rgba(90,45,130,.1)}
-input.inv,textarea.inv{border-color:var(--rd)!important}
-textarea{min-height:68px;resize:vertical}
-.r2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.rg,.cg{display:flex;flex-direction:column;gap:7px;margin-top:4px}
-.ri,.ci{display:flex;align-items:flex-start;gap:9px;padding:9px 11px;border:1px solid var(--br);border-radius:6px;cursor:pointer}
-.ri:has(input:checked),.ci:has(input:checked){border-color:var(--pu);background:var(--pl)}
-.ri input,.ci input{margin-top:2px;flex-shrink:0;accent-color:var(--pu)}
-.ri .lt,.ci .lt{font-size:13px}.ri .lt small,.ci .lt small{display:block;font-size:11px;color:var(--tm)}
-.pc{border:1px solid var(--br);border-radius:6px;margin-bottom:8px;overflow:hidden}
-.pch{background:var(--bg);padding:9px 11px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
-.pch span{font-size:13px;font-weight:700;color:var(--pu)}
-.pcb{padding:11px;border-top:1px solid var(--br)}
-.brm{background:none;border:none;color:var(--rd);font-size:11px;font-weight:700;cursor:pointer;padding:2px 6px}
-.badd{width:100%;padding:9px;border:1.5px dashed var(--pm);background:var(--pl);color:var(--pu);border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px}
-.upz{border:2px dashed var(--pm);border-radius:10px;padding:1.5rem 1rem;text-align:center;cursor:pointer;background:var(--pl);position:relative;overflow:hidden}
-.upz input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
-.upz .uico{font-size:28px;margin-bottom:6px}.upz p{font-size:13px;color:var(--pu);font-weight:700}.upz small{font-size:11px;color:var(--tm)}
-.lhpv{display:none;margin-top:10px;border:1px solid var(--br);border-radius:6px;overflow:hidden}
-.lhpv img{width:100%;max-height:160px;object-fit:contain;background:#f5f5f5}
-.lhpi{padding:7px 11px;display:flex;justify-content:space-between;align-items:center}
-.lhpi span{font-size:11px;color:var(--tm)}.bclr{background:none;border:none;color:var(--rd);font-size:12px;cursor:pointer;font-weight:700}
-.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-.mrow{display:flex;align-items:center;gap:8px;margin-top:3px}
-.mrow input[type=range]{flex:1;accent-color:var(--pu)}
-.mrow span{font-size:12px;font-weight:700;color:var(--pu);min-width:38px;text-align:right}
-#pvwrap{position:relative;width:100%;background:#e0e0e0;border-radius:6px;overflow:hidden;cursor:ns-resize}
-#pvcanvas{display:block;width:100%}
-#dragln{position:absolute;left:0;right:0;height:3px;background:#e74c3c;cursor:ns-resize;z-index:10;top:40%}
-#dragln::before{content:"drag to set content start";position:absolute;top:-20px;left:50%;transform:translateX(-50%);background:#e74c3c;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap}
-.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;overflow-y:auto}
-.mbg.open{display:block}
-.modal{background:var(--wh);margin:1rem auto;border-radius:10px;width:calc(100% - 2rem);max-width:600px}
-.mhdr{background:var(--pu);color:#fff;padding:.875rem 1rem;display:flex;justify-content:space-between;align-items:center;border-radius:10px 10px 0 0}
-.mhdr h3{font-size:15px;font-weight:700}.bx{background:none;border:none;color:#fff;font-size:24px;cursor:pointer;line-height:1}
-.mbody{padding:1rem}
-.macts{display:flex;gap:10px;margin-top:12px}
-.nav{position:fixed;bottom:0;left:0;right:0;background:var(--wh);border-top:1px solid var(--br);padding:.75rem 1.125rem;display:flex;gap:10px;z-index:200}
-.bn{flex:1;padding:12px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;border:none}
-.bback{background:var(--bg);color:var(--tm);border:1px solid var(--br)}.bnxt{background:var(--pu);color:#fff}
-.dc{background:var(--wh);border:1px solid var(--br);border-radius:10px;padding:.875rem 1rem;margin-bottom:10px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 4px rgba(90,45,130,.08)}
-.dico{width:42px;height:42px;background:var(--pl);border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px}
-.dc h3{font-size:14px;font-weight:700;margin-bottom:2px}.dc p{font-size:11px;color:var(--tm)}
-.bgen{margin-left:auto;padding:9px 14px;background:var(--pu);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;min-width:110px;text-align:center}
-.bgen:disabled{opacity:.45;cursor:not-allowed}
-.bgenall{width:100%;padding:13px;background:var(--gn);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px}
-.itxt{font-size:11px;color:var(--tm);padding:7px 10px;background:var(--bg);border-radius:6px;border-left:3px solid var(--pm);margin-top:5px}
-.alert{padding:9px 11px;border-radius:6px;font-size:12px;margin-bottom:10px;display:flex;gap:7px}
-.aw{background:var(--yl);color:#92400e;border:1px solid #fcd34d}
-.ai{background:var(--gl);color:var(--gn);border:1px solid #b7deca}
-.sum{background:var(--pl);border:1px solid var(--pm);border-radius:10px;padding:.875rem 1rem;margin-bottom:.875rem}
-.sum h3{font-size:13px;font-weight:700;color:var(--pu);margin-bottom:8px}
-.sr{display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px}
-.sr .sk{color:var(--tm)}.sr .sv{font-weight:600;text-align:right;max-width:60%}
-.page{display:none}.page.active{display:block}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  background: #f4f0fa;
+  color: #1a1523;
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+/* HEADER */
+.header {
+  background: #5A2D82;
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+}
+.header-title h1 { font-size: 18px; font-weight: 700; }
+.header-title p { font-size: 12px; opacity: 0.8; margin-top: 2px; }
+.btn-clear {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.6);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* PROGRESS */
+.progress {
+  background: white;
+  border-bottom: 1px solid #e0d8f0;
+  padding: 12px 20px;
+  position: sticky;
+  top: 66px;
+  z-index: 99;
+  width: 100%;
+}
+.steps {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.step-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #c8c0d8;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #9d97a8;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.step-dot.active { background: #5A2D82; border-color: #5A2D82; color: white; }
+.step-dot.done { background: #1B7F4F; border-color: #1B7F4F; color: white; }
+.step-line { flex: 1; height: 2px; background: #e0d8f0; }
+.step-line.done { background: #1B7F4F; }
+.step-label { font-size: 11px; color: #6b6478; margin-top: 6px; }
+
+/* MAIN CONTENT */
+.main {
+  padding: 16px;
+  padding-bottom: 100px;
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* PAGE */
+.page { display: none; width: 100%; }
+.page.active { display: block; }
+
+/* CARD */
+.card {
+  background: white;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(90,45,130,0.1);
+  width: 100%;
+}
+.card-header {
+  background: #f0eaf8;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e0d8f0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.card-icon {
+  font-size: 20px;
+  width: 36px;
+  height: 36px;
+  background: #5A2D82;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.card-header h2 { font-size: 15px; font-weight: 700; color: #5A2D82; }
+.card-header p { font-size: 12px; color: #6b6478; margin-top: 2px; }
+.card-body { padding: 16px; }
+
+/* FORM FIELDS */
+.field { margin-bottom: 16px; width: 100%; }
+.field:last-child { margin-bottom: 0; }
+.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #6b6478;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+.required { color: #c0392b; margin-left: 3px; }
+
+input[type="text"],
+input[type="date"],
+input[type="time"],
+select,
+textarea {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #c8c0d8;
+  border-radius: 8px;
+  font-size: 15px;
+  color: #1a1523;
+  background: white;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+select:focus,
+textarea:focus {
+  border-color: #5A2D82;
+  box-shadow: 0 0 0 3px rgba(90,45,130,0.12);
+}
+input.error { border-color: #c0392b !important; }
+textarea { min-height: 80px; resize: vertical; line-height: 1.5; }
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* RADIO AND CHECKBOX OPTIONS */
+.options-list { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
+.option-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1.5px solid #c8c0d8;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  background: white;
+  text-align: left;
+}
+.option-item.selected { border-color: #5A2D82; background: #f0eaf8; }
+.option-item input[type="radio"],
+.option-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  min-height: 18px;
+  margin: 0;
+  margin-top: 1px;
+  padding: 0;
+  border: 2px solid #c8c0d8;
+  border-radius: 50%;
+  background: white;
+  cursor: pointer;
+  flex-shrink: 0;
+  accent-color: #5A2D82;
+}
+.option-item input[type="checkbox"] { border-radius: 4px; }
+.option-text { font-size: 14px; color: #1a1523; line-height: 1.4; }
+.option-text small { display: block; font-size: 12px; color: #6b6478; margin-top: 2px; }
+
+/* HINT TEXT */
+.hint {
+  font-size: 12px;
+  color: #6b6478;
+  background: #f4f0fa;
+  border-left: 3px solid #c9a8e8;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-top: 8px;
+  line-height: 1.5;
+}
+
+/* ALERT BOXES */
+.alert {
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+.alert-warn { background: #fef3c7; border: 1px solid #fcd34d; color: #92400e; }
+.alert-info { background: #e6f4ed; border: 1px solid #b7deca; color: #1B7F4F; }
+
+/* PARTNER CARD */
+.partner-card {
+  border: 1.5px solid #e0d8f0;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  width: 100%;
+}
+.partner-card-header {
+  background: #f4f0fa;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+}
+.partner-card-header span { font-size: 14px; font-weight: 700; color: #5A2D82; }
+.btn-remove-partner {
+  background: none;
+  border: none;
+  color: #c0392b;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.partner-card-body { padding: 14px; border-top: 1px solid #e0d8f0; }
+
+.btn-add-partner {
+  width: 100%;
+  padding: 12px;
+  border: 2px dashed #c9a8e8;
+  background: #f0eaf8;
+  color: #5A2D82;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+/* LETTERHEAD UPLOAD */
+.upload-zone {
+  border: 2px dashed #c9a8e8;
+  border-radius: 10px;
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  background: #f0eaf8;
+  position: relative;
+  width: 100%;
+}
+.upload-zone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: none;
+}
+.upload-icon { font-size: 32px; margin-bottom: 8px; }
+.upload-zone p { font-size: 14px; font-weight: 600; color: #5A2D82; }
+.upload-zone small { font-size: 12px; color: #6b6478; margin-top: 4px; display: block; }
+.upload-preview { display: none; margin-top: 12px; border: 1px solid #e0d8f0; border-radius: 8px; overflow: hidden; }
+.upload-preview img { width: 100%; max-height: 180px; object-fit: contain; background: #f9f9f9; display: block; }
+.upload-preview-footer { padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; }
+.upload-preview-footer span { font-size: 12px; color: #6b6478; }
+.btn-remove-lh { background: none; border: none; color: #c0392b; font-size: 13px; font-weight: 600; cursor: pointer; }
+
+/* MARGIN CONTROLS */
+.margin-controls { margin-top: 16px; }
+.preview-canvas-wrap { position: relative; width: 100%; background: #ddd; border-radius: 8px; overflow: hidden; cursor: ns-resize; }
+canvas { display: block; width: 100%; }
+.drag-line {
+  position: absolute;
+  left: 0; right: 0;
+  height: 3px;
+  background: #e74c3c;
+  cursor: ns-resize;
+  z-index: 10;
+}
+.drag-label {
+  position: absolute;
+  background: #e74c3c;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.slider-row { display: flex; align-items: center; gap: 12px; margin-top: 8px; }
+.slider-row label { font-size: 12px; font-weight: 700; color: #6b6478; text-transform: uppercase; letter-spacing: 0.4px; flex-shrink: 0; }
+.slider-row input[type="range"] { flex: 1; accent-color: #5A2D82; }
+.slider-row span { font-size: 13px; font-weight: 700; color: #5A2D82; min-width: 44px; text-align: right; }
+
+.btn-preview {
+  width: 100%;
+  padding: 13px;
+  margin-top: 14px;
+  background: #5A2D82;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* FULL PREVIEW MODAL */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 500;
+  overflow-y: auto;
+  padding: 16px;
+}
+.modal-overlay.open { display: flex; align-items: flex-start; justify-content: center; }
+.modal-box { background: white; border-radius: 12px; width: 100%; max-width: 580px; overflow: hidden; }
+.modal-header { background: #5A2D82; color: white; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
+.modal-header h3 { font-size: 16px; font-weight: 700; }
+.btn-modal-close { background: none; border: none; color: white; font-size: 26px; cursor: pointer; line-height: 1; }
+.modal-body { padding: 16px; }
+.modal-actions { display: flex; gap: 10px; margin-top: 14px; }
+.btn-adjust { flex: 1; padding: 13px; background: #f4f0fa; border: 1px solid #e0d8f0; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; color: #6b6478; }
+.btn-confirm { flex: 1; padding: 13px; background: #1B7F4F; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; }
+
+/* SUMMARY */
+.summary-box { background: #f0eaf8; border: 1px solid #c9a8e8; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+.summary-box h3 { font-size: 14px; font-weight: 700; color: #5A2D82; margin-bottom: 10px; }
+.summary-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; gap: 12px; }
+.summary-row .key { color: #6b6478; flex-shrink: 0; }
+.summary-row .val { font-weight: 600; text-align: right; word-break: break-word; }
+
+/* GENERATE BUTTONS */
+.doc-item { background: white; border: 1px solid #e0d8f0; border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 14px; box-shadow: 0 1px 3px rgba(90,45,130,0.08); }
+.doc-icon { width: 44px; height: 44px; background: #f0eaf8; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+.doc-info { flex: 1; min-width: 0; }
+.doc-info h3 { font-size: 14px; font-weight: 700; }
+.doc-info p { font-size: 12px; color: #6b6478; margin-top: 2px; }
+.btn-download {
+  background: #5A2D82;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+  min-width: 100px;
+  text-align: center;
+}
+.btn-download:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-download-all {
+  width: 100%;
+  padding: 15px;
+  background: #1B7F4F;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 8px;
+}
+.btn-download-all:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* BOTTOM NAV */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #e0d8f0;
+  padding: 12px 16px;
+  display: flex;
+  gap: 12px;
+  z-index: 200;
+}
+.btn-back {
+  flex: 1;
+  padding: 14px;
+  background: #f4f0fa;
+  border: 1px solid #e0d8f0;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  color: #6b6478;
+}
+.btn-next {
+  flex: 2;
+  padding: 14px;
+  background: #5A2D82;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+hr.divider { border: none; border-top: 1px solid #e0d8f0; margin: 14px 0; }
 </style>
 </head>
 <body>
-<div class="hdr">
-  <div><h1>PhonePe Merchant Docs</h1><p>Auto-saved. Fill once. Generate 3 PDFs.</p></div>
-  <button class="btnclr" onclick="clearAll()">Clear All</button>
-</div>
-<div class="prg">
-  <div class="steps">
-    <div class="sd active" id="d0" onclick="gs(0)">1</div><div class="sl" id="l01"></div>
-    <div class="sd" id="d1" onclick="gs(1)">2</div><div class="sl" id="l12"></div>
-    <div class="sd" id="d2" onclick="gs(2)">3</div><div class="sl" id="l23"></div>
-    <div class="sd" id="d3" onclick="gs(3)">4</div><div class="sl" id="l34"></div>
-    <div class="sd" id="d4" onclick="gs(4)">5</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-title">
+    <h1>&#128196; PhonePe Merchant Docs</h1>
+    <p>Auto-saved &#183; Fill once &#183; Generate 3 PDFs</p>
   </div>
-  <div class="slbl" id="slbl">Step 1 of 5 - Firm Details</div>
+  <button class="btn-clear" onclick="clearAll()">Clear All</button>
 </div>
+
+<!-- PROGRESS -->
+<div class="progress">
+  <div class="steps">
+    <div class="step-dot active" id="dot0" onclick="goTo(0)">1</div>
+    <div class="step-line" id="line01"></div>
+    <div class="step-dot" id="dot1" onclick="goTo(1)">2</div>
+    <div class="step-line" id="line12"></div>
+    <div class="step-dot" id="dot2" onclick="goTo(2)">3</div>
+    <div class="step-line" id="line23"></div>
+    <div class="step-dot" id="dot3" onclick="goTo(3)">4</div>
+    <div class="step-line" id="line34"></div>
+    <div class="step-dot" id="dot4" onclick="goTo(4)">5</div>
+  </div>
+  <div class="step-label" id="stepLabel">Step 1 of 5 - Firm Details</div>
+</div>
+
+<!-- MAIN -->
 <div class="main">
 
+<!-- ===== PAGE 1: FIRM DETAILS ===== -->
 <div class="page active" id="page0">
-  <div class="sec">
-    <div class="sh"><div class="si">&#128336;</div><div><h2>GSTIN (optional)</h2><p>Saved for reference on documents</p></div></div>
-    <div class="sb">
-      <div class="f"><label class="lbl">GSTIN</label>
-        <input type="text" id="gstin" maxlength="15" placeholder="e.g. 27AAAAA0000A1Z5" oninput="this.value=this.value.toUpperCase();sv('gstin',this.value)">
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">&#128340;</div>
+      <div><h2>GSTIN (Optional)</h2><p>Saved for reference on all documents</p></div>
+    </div>
+    <div class="card-body">
+      <div class="field">
+        <label class="field-label">GSTIN</label>
+        <input type="text" id="gstin" maxlength="15" placeholder="e.g. 27AAAAA0000A1Z5"
+          oninput="this.value=this.value.toUpperCase(); save('gstin', this.value)">
       </div>
     </div>
   </div>
-  <div class="sec">
-    <div class="sh"><div class="si">&#127970;</div><div><h2>Firm Details</h2><p>Auto-saved as you type</p></div></div>
-    <div class="sb">
-      <div class="f"><label class="lbl">Legal Name of Partnership Firm <span class="req">*</span></label>
-        <input type="text" id="firmName" placeholder="Full registered firm name" oninput="sv('firmName',this.value)"></div>
-      <div class="f"><label class="lbl">Firm Registration Status <span class="req">*</span></label>
-        <div class="rg">
-          <label class="ri"><input type="radio" name="firmReg" value="registered" onchange="sv('firmReg','registered')"><span class="lt">Registered<small>BO ownership threshold: more than 10%</small></span></label>
-          <label class="ri"><input type="radio" name="firmReg" value="unregistered" onchange="sv('firmReg','unregistered')"><span class="lt">Unregistered<small>BO ownership threshold: more than 15%</small></span></label>
-        </div></div>
-      <div class="f"><label class="lbl">Registered Office Address <span class="req">*</span></label>
-        <textarea id="regAddr" placeholder="Full address including PIN code" oninput="sv('regAddr',this.value)"></textarea></div>
-      <div class="f"><label class="lbl">Principal Place of Business</label>
-        <label class="ci" style="margin-bottom:8px"><input type="checkbox" id="sameP" onchange="togP(this)"><span class="lt">Same as registered address</span></label>
-        <textarea id="prinAddr" placeholder="If different from registered address" oninput="sv('prinAddr',this.value)"></textarea></div>
-      <div class="f"><label class="lbl">Partnership Deed Date (also used as Resolution Date) <span class="req">*</span></label>
-        <input type="date" id="deedDate" onchange="sv('deedDate',this.value)">
-        <div class="itxt">This date is used in all 3 documents for both the deed date and resolution date.</div></div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">&#127970;</div>
+      <div><h2>Firm Details</h2><p>Auto-saved as you type</p></div>
     </div>
-  </div>
-  <div class="sec">
-    <div class="sh"><div class="si">&#128203;</div><div><h2>Meeting Details</h2><p>For the Partner Resolution document</p></div></div>
-    <div class="sb">
-      <div class="r2">
-        <div class="f"><label class="lbl">Meeting Date <span class="req">*</span></label>
-          <input type="date" id="meetDate" onchange="sv('meetDate',this.value)"></div>
-        <div class="f"><label class="lbl">Meeting Time <span class="req">*</span></label>
-          <input type="time" id="meetTime" onchange="sv('meetTime',this.value)"></div>
+    <div class="card-body">
+      <div class="field">
+        <label class="field-label">Legal Name of Partnership Firm <span class="required">*</span></label>
+        <input type="text" id="firmName" placeholder="Full registered firm name"
+          oninput="save('firmName', this.value)">
       </div>
-      <div class="f"><label class="lbl">Meeting Location <span class="req">*</span></label>
-        <input type="text" id="meetLoc" placeholder="e.g. Mumbai" oninput="sv('meetLoc',this.value)"></div>
-      <div class="f"><label class="lbl">BO Declaration Date <span class="req">*</span></label>
-        <input type="date" id="boDate" onchange="sv('boDate',this.value)"></div>
+
+      <div class="field">
+        <label class="field-label">Firm Registration Status <span class="required">*</span></label>
+        <div class="options-list">
+          <label class="option-item" id="opt_reg">
+            <input type="radio" name="firmReg" value="registered"
+              onchange="save('firmReg','registered'); styleOpt('firmReg')">
+            <span class="option-text">Registered
+              <small>BO ownership threshold: more than 10%</small>
+            </span>
+          </label>
+          <label class="option-item" id="opt_unreg">
+            <input type="radio" name="firmReg" value="unregistered"
+              onchange="save('firmReg','unregistered'); styleOpt('firmReg')">
+            <span class="option-text">Unregistered
+              <small>BO ownership threshold: more than 15%</small>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Registered Office Address <span class="required">*</span></label>
+        <textarea id="regAddr" placeholder="Full address including PIN code"
+          oninput="save('regAddr', this.value)"></textarea>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Principal Place of Business</label>
+        <label class="option-item" id="opt_samep" style="margin-bottom:10px">
+          <input type="checkbox" id="sameP" onchange="toggleSameP(this)">
+          <span class="option-text">Same as registered address</span>
+        </label>
+        <textarea id="prinAddr" placeholder="If different from registered address"
+          oninput="save('prinAddr', this.value)"></textarea>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Partnership Deed Date <span class="required">*</span></label>
+        <input type="date" id="deedDate" onchange="save('deedDate', this.value)">
+        <div class="hint">Used as both the Partnership Deed date and Resolution date in all 3 documents.</div>
+      </div>
     </div>
   </div>
-  <div class="sec">
-    <div class="sh"><div class="si">&#128100;</div><div><h2>Agent Name</h2><p>Printed on every generated document</p></div></div>
-    <div class="sb">
-      <div class="f"><label class="lbl">Agent Name <span class="req">*</span></label>
-        <input type="text" id="agentName" placeholder="Full name" oninput="sv('agentName',this.value)"></div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">&#128203;</div>
+      <div><h2>Meeting Details</h2><p>For the Partner Resolution document</p></div>
+    </div>
+    <div class="card-body">
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">Meeting Date <span class="required">*</span></label>
+          <input type="date" id="meetDate" onchange="save('meetDate', this.value)">
+        </div>
+        <div class="field">
+          <label class="field-label">Meeting Time <span class="required">*</span></label>
+          <input type="time" id="meetTime" onchange="save('meetTime', this.value)">
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Meeting Location <span class="required">*</span></label>
+        <input type="text" id="meetLoc" placeholder="e.g. Mumbai"
+          oninput="save('meetLoc', this.value)">
+      </div>
+      <div class="field">
+        <label class="field-label">BO Declaration Date <span class="required">*</span></label>
+        <input type="date" id="boDate" onchange="save('boDate', this.value)">
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">&#128100;</div>
+      <div><h2>Agent Name</h2><p>For audit trail on all documents</p></div>
+    </div>
+    <div class="card-body">
+      <div class="field">
+        <label class="field-label">Agent Name <span class="required">*</span></label>
+        <input type="text" id="agentName" placeholder="Full name"
+          oninput="save('agentName', this.value)">
+      </div>
     </div>
   </div>
 </div>
 
+<!-- ===== PAGE 2: PARTNERS ===== -->
 <div class="page" id="page1">
-  <div class="alert aw">&#9888; Fill each partner completely. Details entered here auto-populate all 3 documents.</div>
-  <div class="sec">
-    <div class="sh"><div class="si">&#128101;</div><div><h2>Partner Details</h2><p>Fill once - used everywhere in all documents</p></div></div>
-    <div class="sb">
+  <div class="alert alert-warn">
+    &#9888; Fill each partner completely. Name, PAN, DOB and address entered here will appear in all 3 documents automatically.
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">&#128101;</div>
+      <div><h2>Partner Details</h2><p>Fill once &#183; used in all 3 documents</p></div>
+    </div>
+    <div class="card-body">
       <div id="partnerList"></div>
-      <button class="badd" onclick="addPartner()">+ Add Another Partner</button>
+      <button class="btn-add-partner" onclick="addPartner()">+ Add Another Partner</button>
     </div>
   </div>
 </div>
 
+<!-- ===== PAGE 3: SELECTIONS ===== -->
 <div class="page" id="page2">
-  <div class="sec">
-    <div class="sh"><div class="si">&#9998;</div><div><h2>Resolution and Signing</h2><p>Who was present, who signs what</p></div></div>
-    <div class="sb">
-      <div class="f"><label class="lbl">Authorised Signatory Partner <span class="req">*</span></label>
-        <select id="authP" onchange="sv('authP',this.value)"><option value="">- Select -</option></select>
-        <div class="itxt">This partner is authorised to open the PhonePe business account on behalf of the firm.</div></div>
-      <div class="f"><label class="lbl">Partners Present at Meeting <span class="req">*</span></label>
-        <div class="cg" id="presentList"></div></div>
-      <hr style="border:none;border-top:1px solid var(--br);margin:10px 0">
-      <div class="f"><label class="lbl">Partners Signing the Partner Declaration <span class="req">*</span></label>
-        <div class="cg" id="decSignList"></div></div>
-      <div class="f"><label class="lbl">Signatories for BO Declaration <span class="req">*</span></label>
-        <div class="cg" id="boSignList"></div>
-        <div class="itxt">For Partnership Firm: any two authorised signatories should sign.</div></div>
-      <hr style="border:none;border-top:1px solid var(--br);margin:10px 0">
-      <div class="f"><label class="lbl">Does ownership greater than 10% exist? <span class="req">*</span></label>
-        <div class="rg">
-          <label class="ri"><input type="radio" name="boOwn" value="yes" onchange="sv('boOwn','yes')"><span class="lt">Yes - persons with more than 10% or 15% ownership exist</span></label>
-          <label class="ri"><input type="radio" name="boOwn" value="no" onchange="sv('boOwn','no')"><span class="lt">No - no such persons identified</span></label>
-        </div></div>
-      <div class="f"><label class="lbl">BO Category <span class="req">*</span></label>
-        <div class="rg">
-          <label class="ri"><input type="radio" name="boCat" value="1" onchange="sv('boCat','1')"><span class="lt">Category 1 - Persons with 10% or 15% or more interest identified</span></label>
-          <label class="ri"><input type="radio" name="boCat" value="2" onchange="sv('boCat','2')"><span class="lt">Category 2 - No such persons found</span></label>
-        </div></div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">&#9998;</div>
+      <div><h2>Resolution &amp; Signing</h2><p>Who was present, who signs what</p></div>
+    </div>
+    <div class="card-body">
+      <div class="field">
+        <label class="field-label">Authorised Signatory Partner <span class="required">*</span></label>
+        <select id="authP" onchange="save('authP', this.value)">
+          <option value="">-- Select partner --</option>
+        </select>
+        <div class="hint">This partner is authorised to open the PhonePe business account on behalf of the firm.</div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Partners Present at Meeting <span class="required">*</span></label>
+        <div class="options-list" id="presentList"></div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="field">
+        <label class="field-label">Partners Signing the Partner Declaration <span class="required">*</span></label>
+        <div class="options-list" id="decSignList"></div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Signatories for BO Declaration <span class="required">*</span></label>
+        <div class="options-list" id="boSignList"></div>
+        <div class="hint">For Partnership Firm: any two authorised signatories should sign.</div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="field">
+        <label class="field-label">Does ownership greater than 10% exist? <span class="required">*</span></label>
+        <div class="options-list">
+          <label class="option-item" id="opt_boown_yes">
+            <input type="radio" name="boOwn" value="yes"
+              onchange="save('boOwn','yes'); styleOpt('boOwn')">
+            <span class="option-text">Yes - persons with more than 10% or 15% ownership exist</span>
+          </label>
+          <label class="option-item" id="opt_boown_no">
+            <input type="radio" name="boOwn" value="no"
+              onchange="save('boOwn','no'); styleOpt('boOwn')">
+            <span class="option-text">No - no such persons identified</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">BO Declaration Category <span class="required">*</span></label>
+        <div class="options-list">
+          <label class="option-item" id="opt_bocat_1">
+            <input type="radio" name="boCat" value="1"
+              onchange="save('boCat','1'); styleOpt('boCat')">
+            <span class="option-text">Category 1 - Persons with 10% or 15% or more interest identified</span>
+          </label>
+          <label class="option-item" id="opt_bocat_2">
+            <input type="radio" name="boCat" value="2"
+              onchange="save('boCat','2'); styleOpt('boCat')">
+            <span class="option-text">Category 2 - No such persons found</span>
+          </label>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
+<!-- ===== PAGE 4: LETTERHEAD ===== -->
 <div class="page" id="page3">
-  <div class="alert aw">&#9888; Upload letterhead. Drag the red line or use the slider to set where content starts. Preview updates live.</div>
-  <div class="sec">
-    <div class="sh"><div class="si">&#128444;</div><div><h2>Merchant Letterhead</h2><p>JPG or PNG - upload then set content position</p></div></div>
-    <div class="sb">
-      <div class="upz">
-        <input type="file" id="lhInput" accept="image/*" onchange="handleLH(event)">
-        <div class="uico">&#128196;</div><p>Tap to upload letterhead image</p><small>JPG or PNG</small>
+  <div class="alert alert-warn">
+    &#9888; Upload the merchant letterhead. Drag the red line or use the slider to set where content starts. Preview updates instantly.
+  </div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon">&#128444;</div>
+      <div><h2>Merchant Letterhead</h2><p>Upload then set content start position</p></div>
+    </div>
+    <div class="card-body">
+      <div class="upload-zone">
+        <input type="file" id="lhFile" accept="image/*" onchange="handleLetterhead(event)">
+        <div class="upload-icon">&#128196;</div>
+        <p>Tap to upload letterhead image</p>
+        <small>JPG or PNG format</small>
       </div>
-      <div class="lhpv" id="lhPrev">
-        <img id="lhImg" src="" alt="Letterhead">
-        <div class="lhpi"><span id="lhName">-</span><button class="bclr" onclick="clearLH()">Remove</button></div>
+      <div class="upload-preview" id="lhPreview">
+        <img id="lhImg" src="" alt="Letterhead preview">
+        <div class="upload-preview-footer">
+          <span id="lhFileName">-</span>
+          <button class="btn-remove-lh" onclick="removeLH()">Remove</button>
+        </div>
       </div>
-      <div id="marginSec" style="display:none;margin-top:14px">
-        <div class="f"><label class="lbl">Live Preview - drag red line or use slider below</label>
-          <div id="pvwrap"><canvas id="pvcanvas"></canvas><div id="dragln"></div></div>
+
+      <div class="margin-controls" id="marginControls" style="display:none">
+        <div class="field">
+          <label class="field-label">Live Preview - drag red line or use slider</label>
+          <div class="preview-canvas-wrap" id="canvasWrap">
+            <canvas id="previewCanvas"></canvas>
+            <div class="drag-line" id="dragLine" style="top:40%">
+              <div class="drag-label">drag to set content start</div>
+            </div>
+          </div>
         </div>
-        <div class="f"><label class="lbl">Top margin in mm (where content starts)</label>
-          <div class="mrow"><input type="range" id="mTop" min="10" max="150" value="60" oninput="upM()"><span id="mTopV">60mm</span></div>
+
+        <div class="field">
+          <label class="field-label">Top Margin (mm) - where content starts below letterhead</label>
+          <div class="slider-row">
+            <input type="range" id="mTop" min="10" max="150" value="60" oninput="updateMargins()">
+            <span id="mTopV">60mm</span>
+          </div>
         </div>
-        <div class="mgrid">
-          <div class="f"><label class="lbl">Left margin mm</label>
-            <div class="mrow"><input type="range" id="mLeft" min="10" max="40" value="20" oninput="upM()"><span id="mLeftV">20mm</span></div></div>
-          <div class="f"><label class="lbl">Right margin mm</label>
-            <div class="mrow"><input type="range" id="mRight" min="10" max="40" value="20" oninput="upM()"><span id="mRightV">20mm</span></div></div>
-          <div class="f"><label class="lbl">Bottom margin mm</label>
-            <div class="mrow"><input type="range" id="mBot" min="10" max="40" value="20" oninput="upM()"><span id="mBotV">20mm</span></div></div>
+
+        <div class="field-row">
+          <div class="field">
+            <label class="field-label">Left (mm)</label>
+            <div class="slider-row">
+              <input type="range" id="mLeft" min="10" max="40" value="20" oninput="updateMargins()">
+              <span id="mLeftV">20mm</span>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-label">Right (mm)</label>
+            <div class="slider-row">
+              <input type="range" id="mRight" min="10" max="40" value="20" oninput="updateMargins()">
+              <span id="mRightV">20mm</span>
+            </div>
+          </div>
         </div>
-        <button onclick="openPv()" style="width:100%;padding:11px;margin-top:12px;background:var(--pu);color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer">Full Page Preview</button>
+
+        <div class="field">
+          <label class="field-label">Bottom (mm)</label>
+          <div class="slider-row">
+            <input type="range" id="mBot" min="10" max="40" value="20" oninput="updateMargins()">
+            <span id="mBotV">20mm</span>
+          </div>
+        </div>
+
+        <button class="btn-preview" onclick="openFullPreview()">&#128065; Full Page Preview</button>
       </div>
     </div>
   </div>
 </div>
 
+<!-- ===== PAGE 5: GENERATE ===== -->
 <div class="page" id="page4">
-  <div class="sum"><h3>Summary</h3><div id="sumContent"></div></div>
-  <div class="alert ai">Review above then download each PDF or all at once.</div>
-  <div class="dc"><div class="dico">&#128220;</div><div><h3>Partner Resolution</h3><p>Meeting resolution on letterhead</p></div><button class="bgen" id="b1" onclick="genDoc(1)">Download PDF</button></div>
-  <div class="dc"><div class="dico">&#128203;</div><div><h3>Partner Declaration</h3><p>Declaration with indemnity clause</p></div><button class="bgen" id="b2" onclick="genDoc(2)">Download PDF</button></div>
-  <div class="dc"><div class="dico">&#128202;</div><div><h3>BO Declaration</h3><p>Beneficial Ownership Declaration</p></div><button class="bgen" id="b3" onclick="genDoc(3)">Download PDF</button></div>
-  <button class="bgenall" id="ball" onclick="genAll()">Download All 3 PDFs</button>
+  <div class="summary-box">
+    <h3>&#128203; Summary</h3>
+    <div id="summaryContent"></div>
+  </div>
+  <div class="alert alert-info">Review the summary above then download each document.</div>
+
+  <div class="doc-item">
+    <div class="doc-icon">&#128220;</div>
+    <div class="doc-info"><h3>Partner Resolution</h3><p>Meeting resolution on letterhead</p></div>
+    <button class="btn-download" id="btn1" onclick="generateDoc(1)">Download PDF</button>
+  </div>
+  <div class="doc-item">
+    <div class="doc-icon">&#128203;</div>
+    <div class="doc-info"><h3>Partner Declaration</h3><p>Declaration with indemnity clause</p></div>
+    <button class="btn-download" id="btn2" onclick="generateDoc(2)">Download PDF</button>
+  </div>
+  <div class="doc-item">
+    <div class="doc-icon">&#128202;</div>
+    <div class="doc-info"><h3>BO Declaration</h3><p>Beneficial Ownership Declaration</p></div>
+    <button class="btn-download" id="btn3" onclick="generateDoc(3)">Download PDF</button>
+  </div>
+  <button class="btn-download-all" id="btnAll" onclick="generateAll()">&#11015; Download All 3 PDFs</button>
 </div>
 
-</div>
-<div class="nav">
-  <button class="bn bback" id="btnBack" onclick="prev()" style="display:none">Back</button>
-  <button class="bn bnxt" id="btnNext" onclick="nxt()">Next</button>
+</div><!-- /main -->
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="btn-back" id="btnBack" onclick="prevStep()" style="display:none">&#8592; Back</button>
+  <button class="btn-next" id="btnNext" onclick="nextStep()">Next &#8594;</button>
 </div>
 
-<div class="mbg" id="pvModal">
-  <div class="modal">
-    <div class="mhdr"><h3>Full Page Preview</h3><button class="bx" onclick="closePv()">x</button></div>
-    <div class="mbody">
-      <div id="pvwrapF" style="position:relative;width:100%;background:#e0e0e0;border-radius:6px;overflow:hidden">
-        <canvas id="pvcanvasF" style="display:block;width:100%"></canvas>
-        <div id="dragnF" style="position:absolute;left:0;right:0;height:3px;background:#e74c3c;cursor:ns-resize;z-index:10;top:40%"></div>
+<!-- FULL PREVIEW MODAL -->
+<div class="modal-overlay" id="previewModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>Full Page Preview</h3>
+      <button class="btn-modal-close" onclick="closeFullPreview()">&#215;</button>
+    </div>
+    <div class="modal-body">
+      <div class="preview-canvas-wrap" id="modalCanvasWrap" style="cursor:ns-resize">
+        <canvas id="modalCanvas"></canvas>
+        <div class="drag-line" id="modalDragLine" style="top:40%">
+          <div class="drag-label">drag to set content start</div>
+        </div>
       </div>
-      <div class="f" style="margin-top:10px"><label class="lbl">Top margin: <span id="pvTopV">60mm</span></label>
-        <input type="range" id="pvSlider" min="10" max="150" value="60" style="width:100%;accent-color:var(--pu)" oninput="onPvSlider()">
+      <div class="field" style="margin-top:12px">
+        <label class="field-label">Top Margin: <span id="modalTopV">60mm</span></label>
+        <input type="range" id="modalSlider" min="10" max="150" value="60"
+          style="width:100%;accent-color:#5A2D82" oninput="onModalSlider()">
       </div>
-      <div class="macts">
-        <button onclick="closePv()" style="flex:1;padding:11px;background:var(--bg);border:1px solid var(--br);border-radius:6px;font-size:14px;font-weight:700;cursor:pointer;color:var(--tm)">Adjust More</button>
-        <button onclick="closePv()" style="flex:1;padding:11px;background:var(--gn);color:#fff;border:none;border-radius:6px;font-size:14px;font-weight:700;cursor:pointer">Confirm Layout</button>
+      <div class="modal-actions">
+        <button class="btn-adjust" onclick="closeFullPreview()">Adjust More</button>
+        <button class="btn-confirm" onclick="closeFullPreview()">&#10003; Confirm Layout</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-var SK = 'pp_v6';
-var S = {
-  gstin:'', firmName:'', firmReg:'registered', regAddr:'', prinAddr:'', sameP:false,
-  deedDate:'', meetDate:'', meetTime:'', meetLoc:'', boDate:'',
-  agentName:'', authP:'', boOwn:'yes', boCat:'1',
-  partners:[], presentNames:[], decSignNames:[], boSignNames:[],
-  lhData:null, lhAspect:0, mTop:60, mLeft:20, mRight:20, mBot:20, step:0
+// ============================================================
+// STATE
+// ============================================================
+var SK = 'pp_merchant_v1';
+var D = {
+  gstin: '', firmName: '', firmReg: 'registered', regAddr: '', prinAddr: '', sameP: false,
+  deedDate: '', meetDate: '', meetTime: '', meetLoc: '', boDate: '', agentName: '',
+  authP: '', boOwn: 'yes', boCat: '1',
+  partners: [], presentNames: [], decSignNames: [], boSignNames: [],
+  lhData: null, lhAspect: 0, mTop: 60, mLeft: 20, mRight: 20, mBot: 20,
+  step: 0
 };
 
-function loadS() {
-  try { var d = localStorage.getItem(SK); if(d) { var p = JSON.parse(d); for(var k in p) S[k] = p[k]; } } catch(e) {}
+function loadData() {
+  try {
+    var raw = localStorage.getItem(SK);
+    if (raw) {
+      var parsed = JSON.parse(raw);
+      for (var k in parsed) { D[k] = parsed[k]; }
+    }
+  } catch(e) {}
 }
-function saveS() {
-  try { localStorage.setItem(SK, JSON.stringify(S)); } catch(e) {}
+
+function saveData() {
+  try { localStorage.setItem(SK, JSON.stringify(D)); } catch(e) {}
 }
-function sv(k, v) { S[k] = v; saveS(); }
+
+function save(key, val) { D[key] = val; saveData(); }
 
 function clearAll() {
-  if(!confirm('Clear ALL saved data? Cannot be undone.')) return;
+  if (!confirm('Clear all saved data? This cannot be undone.')) return;
   localStorage.removeItem(SK);
   location.reload();
 }
 
-function applyS() {
-  var fields = ['gstin','firmName','regAddr','prinAddr','deedDate','meetDate','meetTime','meetLoc','boDate','agentName'];
-  fields.forEach(function(k) {
-    var el = document.getElementById(k);
-    if(el && S[k] !== undefined) el.value = S[k];
+// ============================================================
+// APPLY STATE TO DOM
+// ============================================================
+function applyState() {
+  var textFields = ['gstin','firmName','regAddr','prinAddr','deedDate','meetDate','meetTime','meetLoc','boDate','agentName'];
+  textFields.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && D[id] !== undefined) el.value = D[id];
   });
-  setR('firmReg', S.firmReg || 'registered');
-  setR('boOwn', S.boOwn || 'yes');
-  setR('boCat', S.boCat || '1');
+
+  // Radio buttons
+  setRadio('firmReg', D.firmReg || 'registered');
+  setRadio('boOwn', D.boOwn || 'yes');
+  setRadio('boCat', D.boCat || '1');
+  styleOpt('firmReg');
+  styleOpt('boOwn');
+  styleOpt('boCat');
+
+  // Same principal checkbox
   var sp = document.getElementById('sameP');
-  if(sp) { sp.checked = !!S.sameP; if(S.sameP) { var pa = document.getElementById('prinAddr'); if(pa) pa.disabled = true; } }
-  var ms = ['mTop','mLeft','mRight','mBot'];
-  ms.forEach(function(k) {
-    var el = document.getElementById(k); if(!el) return;
-    el.value = S[k] || el.value;
-    var vl = document.getElementById(k+'V'); if(vl) vl.textContent = el.value + 'mm';
-  });
-  if(S.lhData) {
-    var li = document.getElementById('lhImg'); if(li) li.src = S.lhData;
-    var ln = document.getElementById('lhName'); if(ln) ln.textContent = 'Saved letterhead';
-    var lp = document.getElementById('lhPrev'); if(lp) lp.style.display = 'block';
-    var ms2 = document.getElementById('marginSec'); if(ms2) ms2.style.display = 'block';
-    setTimeout(drawPv, 100);
+  if (sp) {
+    sp.checked = !!D.sameP;
+    if (D.sameP) {
+      var pa = document.getElementById('prinAddr');
+      if (pa) pa.disabled = true;
+    }
+    updateOptStyle(document.getElementById('opt_samep'), !!D.sameP);
   }
+
+  // Sliders
+  ['mTop','mLeft','mRight','mBot'].forEach(function(k) {
+    var el = document.getElementById(k);
+    if (el && D[k]) el.value = D[k];
+    var vl = document.getElementById(k + 'V');
+    if (vl && D[k]) vl.textContent = D[k] + 'mm';
+  });
+
+  // Letterhead
+  if (D.lhData) {
+    document.getElementById('lhImg').src = D.lhData;
+    document.getElementById('lhFileName').textContent = 'Saved letterhead';
+    document.getElementById('lhPreview').style.display = 'block';
+    document.getElementById('marginControls').style.display = 'block';
+    setTimeout(drawPreview, 100);
+  }
+
   renderPartners();
 }
 
-function setR(name, val) {
-  var el = document.querySelector('input[name="' + name + '"][value="' + val + '"]');
-  if(el) el.checked = true;
+function setRadio(name, val) {
+  var inputs = document.querySelectorAll('input[name="' + name + '"]');
+  for (var i = 0; i < inputs.length; i++) {
+    inputs[i].checked = (inputs[i].value === val);
+  }
 }
 
-var LBLS = ['Step 1 of 5 - Firm Details','Step 2 of 5 - Partner Details','Step 3 of 5 - Selections','Step 4 of 5 - Letterhead','Step 5 of 5 - Generate PDFs'];
-
-function updateUI() {
-  var pages = document.querySelectorAll('.page');
-  pages.forEach(function(p, i) { p.classList.toggle('active', i === S.step); });
-  for(var i = 0; i < 5; i++) {
-    var d = document.getElementById('d' + i);
-    if(d) { d.classList.toggle('active', i === S.step); d.classList.toggle('done', i < S.step); }
-    if(i < 4) { var l = document.getElementById('l' + i + (i+1)); if(l) l.classList.toggle('done', i < S.step); }
+function styleOpt(radioName) {
+  var inputs = document.querySelectorAll('input[name="' + radioName + '"]');
+  for (var i = 0; i < inputs.length; i++) {
+    var parent = inputs[i].closest('.option-item');
+    if (parent) updateOptStyle(parent, inputs[i].checked);
   }
-  var slbl = document.getElementById('slbl'); if(slbl) slbl.textContent = LBLS[S.step];
-  var bb = document.getElementById('btnBack'); if(bb) bb.style.display = S.step > 0 ? 'block' : 'none';
+}
+
+function updateOptStyle(el, selected) {
+  if (!el) return;
+  if (selected) el.classList.add('selected');
+  else el.classList.remove('selected');
+}
+
+// ============================================================
+// STEP NAVIGATION
+// ============================================================
+var STEP_LABELS = [
+  'Step 1 of 5 - Firm Details',
+  'Step 2 of 5 - Partner Details',
+  'Step 3 of 5 - Selections',
+  'Step 4 of 5 - Letterhead',
+  'Step 5 of 5 - Generate PDFs'
+];
+
+function updateStepUI() {
+  // Pages
+  var pages = document.querySelectorAll('.page');
+  for (var i = 0; i < pages.length; i++) {
+    pages[i].classList.toggle('active', i === D.step);
+  }
+  // Dots and lines
+  for (var i = 0; i < 5; i++) {
+    var dot = document.getElementById('dot' + i);
+    if (dot) {
+      dot.classList.toggle('active', i === D.step);
+      dot.classList.toggle('done', i < D.step);
+    }
+    if (i < 4) {
+      var line = document.getElementById('line' + i + (i+1));
+      if (line) line.classList.toggle('done', i < D.step);
+    }
+  }
+  // Label
+  document.getElementById('stepLabel').textContent = STEP_LABELS[D.step];
+  // Back button
+  var bb = document.getElementById('btnBack');
+  bb.style.display = D.step > 0 ? 'block' : 'none';
+  // Next button
   var nb = document.getElementById('btnNext');
-  if(nb) { nb.style.display = S.step === 4 ? 'none' : 'block'; nb.textContent = S.step === 3 ? 'Review' : 'Next'; }
-  if(S.step === 2) fillStep3();
-  if(S.step === 3) { setTimeout(drawPv, 100); }
-  if(S.step === 4) buildSum();
+  if (D.step === 4) {
+    nb.style.display = 'none';
+  } else {
+    nb.style.display = 'block';
+    nb.textContent = D.step === 3 ? 'Review →' : 'Next →';
+  }
+  // Step-specific setup
+  if (D.step === 2) populateStep3();
+  if (D.step === 3) setTimeout(drawPreview, 100);
+  if (D.step === 4) buildSummary();
   window.scrollTo(0, 0);
 }
 
-function gs(i) { if(i <= S.step) { S.step = i; saveS(); updateUI(); } }
-function prev() { if(S.step > 0) { S.step--; saveS(); updateUI(); } }
-function nxt() { if(!validate()) return; S.step++; saveS(); updateUI(); }
+function goTo(i) {
+  if (i <= D.step) { D.step = i; saveData(); updateStepUI(); }
+}
 
+function prevStep() {
+  if (D.step > 0) { D.step--; saveData(); updateStepUI(); }
+}
+
+function nextStep() {
+  if (!validate()) return;
+  D.step++;
+  saveData();
+  updateStepUI();
+}
+
+// ============================================================
+// VALIDATION
+// ============================================================
 function validate() {
-  var s = S.step;
-  if(s === 0) {
-    var ids = ['firmName','regAddr','deedDate','meetDate','meetTime','meetLoc','boDate','agentName'];
-    var ok = true;
-    ids.forEach(function(id) {
-      var el = document.getElementById(id);
-      if(!el) return;
-      if(!el.value || !el.value.trim()) { el.classList.add('inv'); ok = false; }
-      else el.classList.remove('inv');
-    });
-    if(!ok) {
-      var first = document.querySelector('.inv');
-      if(first) first.scrollIntoView({block:'center', behavior:'smooth'});
-      return false;
+  if (D.step === 0) {
+    var required = ['firmName','regAddr','deedDate','meetDate','meetTime','meetLoc','boDate','agentName'];
+    var allOk = true;
+    for (var i = 0; i < required.length; i++) {
+      var el = document.getElementById(required[i]);
+      if (!el) continue;
+      var val = el.value ? el.value.trim() : '';
+      if (!val) {
+        el.classList.add('error');
+        if (allOk) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        allOk = false;
+      } else {
+        el.classList.remove('error');
+      }
+    }
+    if (!allOk) return false;
+  }
+
+  if (D.step === 1) {
+    if (D.partners.length === 0) { alert('Please add at least one partner.'); return false; }
+    for (var i = 0; i < D.partners.length; i++) {
+      if (!D.partners[i].name || !D.partners[i].name.trim()) {
+        alert('Partner ' + (i+1) + ' is missing a name. Please fill in all partner names.');
+        return false;
+      }
     }
   }
-  if(s === 1) {
-    if(S.partners.length === 0) { alert('Add at least one partner.'); return false; }
-    var hasBlank = false;
-    S.partners.forEach(function(p) { if(!p.name || !p.name.trim()) hasBlank = true; });
-    if(hasBlank) { alert('Every partner must have a name.'); return false; }
+
+  if (D.step === 2) {
+    if (!D.authP) { alert('Please select the authorised signatory partner.'); return false; }
+    if (!D.presentNames || D.presentNames.length === 0) { alert('Please select partners present at the meeting.'); return false; }
+    if (!D.decSignNames || D.decSignNames.length === 0) { alert('Please select signatories for the Partner Declaration.'); return false; }
+    if (!D.boSignNames || D.boSignNames.length === 0) { alert('Please select signatories for the BO Declaration.'); return false; }
   }
-  if(s === 2) {
-    if(!S.authP) { alert('Select the authorised signatory partner.'); return false; }
-    if(!S.presentNames || S.presentNames.length === 0) { alert('Select partners present at the meeting.'); return false; }
-    if(!S.decSignNames || S.decSignNames.length === 0) { alert('Select signatories for the Declaration.'); return false; }
-    if(!S.boSignNames || S.boSignNames.length === 0) { alert('Select signatories for the BO Declaration.'); return false; }
+
+  if (D.step === 3) {
+    if (!D.lhData) { alert('Please upload the merchant letterhead image.'); return false; }
   }
-  if(s === 3) { if(!S.lhData) { alert('Please upload the merchant letterhead.'); return false; } }
+
   return true;
 }
 
-function togP(cb) {
-  S.sameP = cb.checked;
+// ============================================================
+// PRINCIPAL ADDRESS TOGGLE
+// ============================================================
+function toggleSameP(cb) {
+  D.sameP = cb.checked;
   var pa = document.getElementById('prinAddr');
-  if(cb.checked) { pa.value = document.getElementById('regAddr').value; pa.disabled = true; sv('prinAddr', pa.value); }
-  else { pa.disabled = false; }
-  saveS();
+  var opt = document.getElementById('opt_samep');
+  updateOptStyle(opt, cb.checked);
+  if (cb.checked) {
+    pa.value = D.regAddr;
+    pa.disabled = true;
+    D.prinAddr = D.regAddr;
+  } else {
+    pa.disabled = false;
+  }
+  saveData();
 }
 
-var _pid = 0;
+// ============================================================
+// PARTNERS
+// ============================================================
+var nextPid = 1;
+
 function addPartner() {
-  _pid++;
-  S.partners.push({id:_pid,name:'',pan:'',dob:'',address:'',pin:'',nationality:'Indian',din:'',ovd:'Voter ID',ownership:'',designation:'Partner'});
-  renderPartners(); saveS();
+  D.partners.push({
+    id: nextPid++,
+    name: '', pan: '', dob: '', address: '', pin: '',
+    nationality: 'Indian', din: '', ovd: 'Voter ID', ownership: '', designation: 'Partner'
+  });
+  renderPartners();
+  saveData();
 }
+
 function removePartner(id) {
-  S.partners = S.partners.filter(function(p) { return p.id !== id; });
-  renderPartners(); saveS();
+  D.partners = D.partners.filter(function(p) { return p.id !== id; });
+  renderPartners();
+  saveData();
 }
-function setP(id, k, v) {
-  var p = null;
-  S.partners.forEach(function(x) { if(x.id === id) p = x; });
-  if(!p) return;
-  p[k] = v; saveS();
-  if(k === 'name') {
-    var h = document.getElementById('ph' + id);
-    if(h) {
-      var idx = 0;
-      S.partners.forEach(function(x, i) { if(x.id === id) idx = i; });
-      h.textContent = 'Partner ' + (idx + 1) + (v ? ' - ' + v : '');
+
+function updatePartner(id, key, val) {
+  for (var i = 0; i < D.partners.length; i++) {
+    if (D.partners[i].id === id) {
+      D.partners[i][key] = val;
+      if (key === 'name') {
+        var hdr = document.getElementById('pHeader' + id);
+        var idx = i;
+        if (hdr) hdr.textContent = 'Partner ' + (idx + 1) + (val ? ' - ' + val : '');
+      }
+      break;
     }
   }
+  saveData();
 }
-function esc(v) {
-  if(!v) return '';
-  return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function togglePartnerBody(id) {
+  var body = document.getElementById('pBody' + id);
+  if (body) body.style.display = body.style.display === 'none' ? 'block' : 'block';
 }
+
 function renderPartners() {
   var list = document.getElementById('partnerList');
-  if(!list) return;
+  if (!list) return;
   list.innerHTML = '';
-  S.partners.forEach(function(p, idx) {
-    var d = document.createElement('div');
-    d.className = 'pc';
-    var ovdOpts = ['Voter ID','Driving Licence','Passport','Aadhaar Card'].map(function(o) {
+
+  for (var i = 0; i < D.partners.length; i++) {
+    var p = D.partners[i];
+    var idx = i;
+
+    var card = document.createElement('div');
+    card.className = 'partner-card';
+
+    var ovdOptions = ['Voter ID','Driving Licence','Passport','Aadhaar Card'].map(function(o) {
       return '<option value="' + o + '"' + (p.ovd === o ? ' selected' : '') + '>' + o + '</option>';
     }).join('');
-    d.innerHTML = '<div class="pch" onclick="togglePC(' + p.id + ')"><span id="ph' + p.id + '">Partner ' + (idx+1) + (p.name ? ' - ' + esc(p.name) : '') + '</span><button class="brm" onclick="event.stopPropagation();removePartner(' + p.id + ')">Remove</button></div>'
-      + '<div class="pcb" id="pb' + p.id + '">'
-      + '<div class="f"><label class="lbl">Full Name (as per PAN) <span class="req">*</span></label><input type="text" value="' + esc(p.name) + '" placeholder="Full name" oninput="setP(' + p.id + ','name',this.value)"></div>'
-      + '<div class="r2">'
-      + '<div class="f"><label class="lbl">PAN Number</label><input type="text" value="' + esc(p.pan) + '" placeholder="ABCDE1234F" maxlength="10" style="text-transform:uppercase" oninput="setP(' + p.id + ','pan',this.value.toUpperCase())"></div>'
-      + '<div class="f"><label class="lbl">Date of Birth</label><input type="date" value="' + esc(p.dob) + '" onchange="setP(' + p.id + ','dob',this.value)"></div>'
-      + '</div>'
-      + '<div class="f"><label class="lbl">Residential Address</label><textarea oninput="setP(' + p.id + ','address',this.value)">' + esc(p.address) + '</textarea></div>'
-      + '<div class="r2">'
-      + '<div class="f"><label class="lbl">PIN Code</label><input type="text" value="' + esc(p.pin) + '" placeholder="6-digit PIN" maxlength="6" oninput="setP(' + p.id + ','pin',this.value)"></div>'
-      + '<div class="f"><label class="lbl">Nationality</label><input type="text" value="' + esc(p.nationality || 'Indian') + '" oninput="setP(' + p.id + ','nationality',this.value)"></div>'
-      + '</div>'
-      + '<div class="r2">'
-      + '<div class="f"><label class="lbl">OVD / Address Proof</label><select onchange="setP(' + p.id + ','ovd',this.value)">' + ovdOpts + '</select></div>'
-      + '<div class="f"><label class="lbl">DIN (if applicable)</label><input type="text" value="' + esc(p.din) + '" placeholder="N/A" oninput="setP(' + p.id + ','din',this.value)"></div>'
-      + '</div>'
-      + '<div class="r2">'
-      + '<div class="f"><label class="lbl">% Ownership <span class="req">*</span></label><input type="text" value="' + esc(p.ownership) + '" placeholder="e.g. 33.33" oninput="setP(' + p.id + ','ownership',this.value)"></div>'
-      + '<div class="f"><label class="lbl">Designation</label><input type="text" value="' + esc(p.designation || 'Partner') + '" oninput="setP(' + p.id + ','designation',this.value)"></div>'
-      + '</div>'
-      + '</div>';
-    list.appendChild(d);
-  });
-}
-function togglePC(id) {
-  var b = document.getElementById('pb' + id);
-  if(b) b.style.display = b.style.display === 'none' ? 'block' : 'none';
+
+    card.innerHTML =
+      '<div class="partner-card-header" onclick="togglePartnerBody(' + p.id + ')">' +
+        '<span id="pHeader' + p.id + '">Partner ' + (idx + 1) + (p.name ? ' - ' + escHtml(p.name) : '') + '</span>' +
+        '<button class="btn-remove-partner" onclick="event.stopPropagation(); removePartner(' + p.id + ')">Remove</button>' +
+      '</div>' +
+      '<div class="partner-card-body" id="pBody' + p.id + '">' +
+        '<div class="field"><label class="field-label">Full Name (as per PAN) <span class="required">*</span></label>' +
+          '<input type="text" value="' + escHtml(p.name) + '" placeholder="Full name" oninput="updatePartner(' + p.id + ', 'name', this.value)"></div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label class="field-label">PAN Number</label>' +
+            '<input type="text" value="' + escHtml(p.pan) + '" placeholder="ABCDE1234F" maxlength="10" style="text-transform:uppercase" oninput="updatePartner(' + p.id + ', 'pan', this.value.toUpperCase())"></div>' +
+          '<div class="field"><label class="field-label">Date of Birth</label>' +
+            '<input type="date" value="' + escHtml(p.dob) + '" onchange="updatePartner(' + p.id + ', 'dob', this.value)"></div>' +
+        '</div>' +
+        '<div class="field"><label class="field-label">Residential Address</label>' +
+          '<textarea oninput="updatePartner(' + p.id + ', 'address', this.value)">' + escHtml(p.address) + '</textarea></div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label class="field-label">PIN Code</label>' +
+            '<input type="text" value="' + escHtml(p.pin) + '" placeholder="6-digit PIN" maxlength="6" oninput="updatePartner(' + p.id + ', 'pin', this.value)"></div>' +
+          '<div class="field"><label class="field-label">Nationality</label>' +
+            '<input type="text" value="' + escHtml(p.nationality || 'Indian') + '" oninput="updatePartner(' + p.id + ', 'nationality', this.value)"></div>' +
+        '</div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label class="field-label">OVD / Address Proof</label>' +
+            '<select onchange="updatePartner(' + p.id + ', 'ovd', this.value)">' + ovdOptions + '</select></div>' +
+          '<div class="field"><label class="field-label">DIN (if applicable)</label>' +
+            '<input type="text" value="' + escHtml(p.din) + '" placeholder="N/A" oninput="updatePartner(' + p.id + ', 'din', this.value)"></div>' +
+        '</div>' +
+        '<div class="field-row">' +
+          '<div class="field"><label class="field-label">% Ownership <span class="required">*</span></label>' +
+            '<input type="text" value="' + escHtml(p.ownership) + '" placeholder="e.g. 33.33" oninput="updatePartner(' + p.id + ', 'ownership', this.value)"></div>' +
+          '<div class="field"><label class="field-label">Designation</label>' +
+            '<input type="text" value="' + escHtml(p.designation || 'Partner') + '" oninput="updatePartner(' + p.id + ', 'designation', this.value)"></div>' +
+        '</div>' +
+      '</div>';
+
+    list.appendChild(card);
+  }
 }
 
-function fillStep3() {
-  var names = S.partners.map(function(p) { return p.name; }).filter(Boolean);
-  var auth = document.getElementById('authP');
-  if(auth) {
-    auth.innerHTML = '<option value="">- Select -</option>';
+function escHtml(v) {
+  if (!v) return '';
+  return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ============================================================
+// STEP 3 - POPULATE SELECTIONS
+// ============================================================
+function populateStep3() {
+  var names = D.partners.map(function(p) { return p.name; }).filter(Boolean);
+
+  // Auth partner select
+  var authSel = document.getElementById('authP');
+  if (authSel) {
+    authSel.innerHTML = '<option value="">-- Select partner --</option>';
     names.forEach(function(n) {
-      auth.innerHTML += '<option value="' + n + '"' + (S.authP === n ? ' selected' : '') + '>' + n + '</option>';
+      var opt = document.createElement('option');
+      opt.value = n;
+      opt.textContent = n;
+      if (D.authP === n) opt.selected = true;
+      authSel.appendChild(opt);
     });
   }
-  renderCL('presentList', names, S.presentNames, 'presentNames');
-  renderCL('decSignList', names, S.decSignNames, 'decSignNames');
-  renderCL('boSignList', names, S.boSignNames, 'boSignNames');
+
+  buildCheckList('presentList', names, D.presentNames, 'presentNames');
+  buildCheckList('decSignList', names, D.decSignNames, 'decSignNames');
+  buildCheckList('boSignList', names, D.boSignNames, 'boSignNames');
 }
 
-function renderCL(cid, names, sel, sk) {
-  var div = document.getElementById(cid); if(!div) return; div.innerHTML = '';
+function buildCheckList(containerId, names, selected, stateKey) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+
   names.forEach(function(name) {
-    var l = document.createElement('label'); l.className = 'ci';
-    var chk = sel && sel.indexOf(name) > -1;
-    l.innerHTML = '<input type="checkbox" value="' + name + '"' + (chk ? ' checked' : '') + '><span class="lt">' + name + '</span>';
-    l.querySelector('input').onchange = function(e) {
-      var arr = S[sk] || [];
-      if(e.target.checked) { if(arr.indexOf(name) < 0) arr.push(name); }
-      else { var i = arr.indexOf(name); if(i > -1) arr.splice(i,1); }
-      S[sk] = arr; saveS();
+    var isChecked = selected && selected.indexOf(name) > -1;
+    var label = document.createElement('label');
+    label.className = 'option-item' + (isChecked ? ' selected' : '');
+
+    var cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.value = name;
+    cb.checked = isChecked;
+    cb.onchange = function() {
+      var arr = D[stateKey] || [];
+      if (cb.checked) {
+        if (arr.indexOf(name) < 0) arr.push(name);
+        label.classList.add('selected');
+      } else {
+        var idx = arr.indexOf(name);
+        if (idx > -1) arr.splice(idx, 1);
+        label.classList.remove('selected');
+      }
+      D[stateKey] = arr;
+      saveData();
     };
-    div.appendChild(l);
+
+    var span = document.createElement('span');
+    span.className = 'option-text';
+    span.textContent = name;
+
+    label.appendChild(cb);
+    label.appendChild(span);
+    container.appendChild(label);
   });
 }
 
-function handleLH(e) {
-  var file = e.target.files[0]; if(!file) return;
+// ============================================================
+// LETTERHEAD
+// ============================================================
+function handleLetterhead(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+
   var reader = new FileReader();
-  reader.onload = function(ev) {
-    S.lhData = ev.target.result;
+  reader.onload = function(e) {
+    D.lhData = e.target.result;
     var img = new Image();
     img.onload = function() {
-      S.lhAspect = img.naturalHeight / img.naturalWidth;
-      var lhH = Math.round(S.lhAspect * 210);
-      S.mTop = Math.min(140, Math.max(15, lhH + 5));
-      saveS();
-      var el = document.getElementById('mTop'); if(el) el.value = S.mTop;
-      var vl = document.getElementById('mTopV'); if(vl) vl.textContent = S.mTop + 'mm';
-      drawPv();
+      D.lhAspect = img.naturalHeight / img.naturalWidth;
+      var lhMM = Math.round(D.lhAspect * 210);
+      D.mTop = Math.min(140, Math.max(15, lhMM + 5));
+      document.getElementById('mTop').value = D.mTop;
+      document.getElementById('mTopV').textContent = D.mTop + 'mm';
+      saveData();
+      drawPreview();
     };
-    img.src = S.lhData;
-    var li = document.getElementById('lhImg'); if(li) li.src = S.lhData;
-    var ln = document.getElementById('lhName'); if(ln) ln.textContent = file.name + ' - ' + Math.round(file.size/1024) + 'KB';
-    var lp = document.getElementById('lhPrev'); if(lp) lp.style.display = 'block';
-    var ms = document.getElementById('marginSec'); if(ms) ms.style.display = 'block';
+    img.src = D.lhData;
+
+    document.getElementById('lhImg').src = D.lhData;
+    document.getElementById('lhFileName').textContent = file.name + ' (' + Math.round(file.size/1024) + ' KB)';
+    document.getElementById('lhPreview').style.display = 'block';
+    document.getElementById('marginControls').style.display = 'block';
   };
   reader.readAsDataURL(file);
 }
-function clearLH() {
-  S.lhData = null; S.lhAspect = 0; saveS();
-  var li = document.getElementById('lhInput'); if(li) li.value = '';
-  var lp = document.getElementById('lhPrev'); if(lp) lp.style.display = 'none';
-  var ms = document.getElementById('marginSec'); if(ms) ms.style.display = 'none';
+
+function removeLH() {
+  D.lhData = null; D.lhAspect = 0;
+  document.getElementById('lhFile').value = '';
+  document.getElementById('lhPreview').style.display = 'none';
+  document.getElementById('marginControls').style.display = 'none';
+  saveData();
 }
-function upM() {
+
+function updateMargins() {
   var keys = ['mTop','mLeft','mRight','mBot'];
   keys.forEach(function(k) {
-    var el = document.getElementById(k); if(!el) return;
-    S[k] = parseInt(el.value);
-    var vl = document.getElementById(k + 'V'); if(vl) vl.textContent = S[k] + 'mm';
+    var el = document.getElementById(k);
+    if (el) {
+      D[k] = parseInt(el.value);
+      var vl = document.getElementById(k + 'V');
+      if (vl) vl.textContent = D[k] + 'mm';
+    }
   });
-  saveS(); drawPv();
+  saveData();
+  drawPreview();
 }
-function drawPv() {
-  if(!S.lhData) return;
-  var canvas = document.getElementById('pvcanvas'); if(!canvas) return;
-  var wrap = document.getElementById('pvwrap'); if(!wrap) return;
+
+// ============================================================
+// CANVAS PREVIEW
+// ============================================================
+var dragging = false;
+
+function drawCanvas(canvasId, wrapId, dragLineId) {
+  if (!D.lhData) return;
+  var canvas = document.getElementById(canvasId);
+  var wrap = document.getElementById(wrapId);
+  if (!canvas || !wrap) return;
+
   var W = wrap.offsetWidth || 300;
   var H = Math.round(W * 297 / 210);
-  canvas.width = W; canvas.height = H;
+  canvas.width = W;
+  canvas.height = H;
+
   var ctx = canvas.getContext('2d');
   var img = new Image();
   img.onload = function() {
-    ctx.clearRect(0,0,W,H);
-    ctx.fillStyle = '#fff'; ctx.fillRect(0,0,W,H);
-    var lhH = S.lhAspect > 0 ? Math.round(S.lhAspect * W) : Math.round((S.mTop/297)*H*0.8);
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, W, H);
+
+    // Draw letterhead at correct proportion
+    var lhH = D.lhAspect > 0 ? Math.round(D.lhAspect * W) : Math.round((D.mTop / 297) * H * 0.85);
     ctx.drawImage(img, 0, 0, W, lhH);
-    var cY = Math.round((S.mTop/297)*H);
-    var ml = Math.round((S.mLeft/210)*W);
-    var mr = Math.round((S.mRight/210)*W);
-    var mb = Math.round((S.mBot/297)*H);
-    ctx.fillStyle = 'rgba(90,45,130,0.07)';
-    ctx.fillRect(ml, cY, W-ml-mr, H-cY-mb);
-    var dl = document.getElementById('dragln');
-    if(dl) dl.style.top = cY + 'px';
-    var lnH = Math.round(W/35);
+
+    // Content area
+    var cY = Math.round((D.mTop / 297) * H);
+    var ml = Math.round((D.mLeft / 210) * W);
+    var mr = Math.round((D.mRight / 210) * W);
+    var mb = Math.round((D.mBot / 297) * H);
+    ctx.fillStyle = 'rgba(90,45,130,0.06)';
+    ctx.fillRect(ml, cY, W - ml - mr, H - cY - mb);
+
+    // Sample text lines
     ctx.fillStyle = '#bbb';
-    var ty = cY + lnH * 2;
-    [0.7,0.95,0.5,0.88,0.65,0.80].forEach(function(f) {
-      if(ty < H-mb-lnH) { ctx.fillRect(ml, ty, Math.round((W-ml-mr)*f), Math.round(lnH*0.4)); ty += lnH*1.4; }
+    var lineH = Math.round(W / 34);
+    var ty = cY + lineH * 2;
+    [0.7, 0.9, 0.5, 0.85, 0.65, 0.78].forEach(function(f) {
+      if (ty < H - mb - lineH) {
+        ctx.fillRect(ml, ty, Math.round((W - ml - mr) * f), Math.round(lineH * 0.4));
+        ty += lineH * 1.4;
+      }
     });
-    ctx.strokeStyle = '#e74c3c'; ctx.lineWidth = 2; ctx.setLineDash([]);
-    ctx.beginPath(); ctx.moveTo(0,cY); ctx.lineTo(W,cY); ctx.stroke();
+
+    // Red content start line
+    ctx.strokeStyle = '#e74c3c';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, cY);
+    ctx.lineTo(W, cY);
+    ctx.stroke();
+
+    // Label above line
     ctx.fillStyle = '#e74c3c';
-    ctx.font = 'bold ' + Math.round(W/30) + 'px sans-serif';
-    ctx.fillText('content starts here (' + S.mTop + 'mm)', ml+4, cY-4);
+    ctx.font = 'bold ' + Math.round(W / 28) + 'px sans-serif';
+    ctx.fillText('Content starts here (' + D.mTop + 'mm)', ml + 4, cY - 4);
+
+    // Update drag line position
+    var dl = document.getElementById(dragLineId);
+    if (dl) dl.style.top = cY + 'px';
   };
-  img.src = S.lhData;
+  img.src = D.lhData;
 }
 
-var _dragMini = false;
-function initDrag() {
-  var dl = document.getElementById('dragln');
-  var wrap = document.getElementById('pvwrap');
-  if(!dl || !wrap) return;
-  function start(e) { _dragMini = true; e.preventDefault(); }
-  function move(e) {
-    if(!_dragMini) return;
-    var rect = wrap.getBoundingClientRect();
-    var cy = e.touches ? e.touches[0].clientY : e.clientY;
-    var pct = Math.max(0.05, Math.min(0.95, (cy - rect.top) / rect.height));
-    S.mTop = Math.max(10, Math.min(150, Math.round(pct * 297))); saveS();
-    var el = document.getElementById('mTop'); if(el) el.value = S.mTop;
-    var vl = document.getElementById('mTopV'); if(vl) vl.textContent = S.mTop + 'mm';
-    drawPv();
+function drawPreview() {
+  drawCanvas('previewCanvas', 'canvasWrap', 'dragLine');
+}
+
+function drawModalPreview() {
+  drawCanvas('modalCanvas', 'modalCanvasWrap', 'modalDragLine');
+}
+
+// Drag on mini preview
+function setupDrag() {
+  var wrap = document.getElementById('canvasWrap');
+  var dl = document.getElementById('dragLine');
+  if (!wrap || !dl) return;
+
+  function getY(e) {
+    return e.touches ? e.touches[0].clientY : e.clientY;
   }
-  function end() { _dragMini = false; }
-  dl.addEventListener('mousedown', start); dl.addEventListener('touchstart', start, {passive:false});
-  document.addEventListener('mousemove', move); document.addEventListener('touchmove', move, {passive:false});
-  document.addEventListener('mouseup', end); document.addEventListener('touchend', end);
+
+  dl.addEventListener('mousedown', function(e) { dragging = true; e.preventDefault(); });
+  dl.addEventListener('touchstart', function(e) { dragging = true; e.preventDefault(); }, { passive: false });
+
+  document.addEventListener('mousemove', function(e) {
+    if (!dragging) return;
+    var rect = wrap.getBoundingClientRect();
+    var pct = Math.max(0.05, Math.min(0.95, (getY(e) - rect.top) / rect.height));
+    D.mTop = Math.max(10, Math.min(150, Math.round(pct * 297)));
+    document.getElementById('mTop').value = D.mTop;
+    document.getElementById('mTopV').textContent = D.mTop + 'mm';
+    saveData();
+    drawPreview();
+  });
+  document.addEventListener('touchmove', function(e) {
+    if (!dragging) return;
+    e.preventDefault();
+    var rect = wrap.getBoundingClientRect();
+    var pct = Math.max(0.05, Math.min(0.95, (getY(e) - rect.top) / rect.height));
+    D.mTop = Math.max(10, Math.min(150, Math.round(pct * 297)));
+    document.getElementById('mTop').value = D.mTop;
+    document.getElementById('mTopV').textContent = D.mTop + 'mm';
+    saveData();
+    drawPreview();
+  }, { passive: false });
+  document.addEventListener('mouseup', function() { dragging = false; });
+  document.addEventListener('touchend', function() { dragging = false; });
 }
 
-function drawPvFull() {
-  if(!S.lhData) return;
-  var canvas = document.getElementById('pvcanvasF'); if(!canvas) return;
-  var wrap = document.getElementById('pvwrapF'); if(!wrap) return;
-  var W = wrap.offsetWidth || 320;
-  var H = Math.round(W * 297 / 210);
-  canvas.width = W; canvas.height = H;
-  var ctx = canvas.getContext('2d');
-  var img = new Image();
-  img.onload = function() {
-    ctx.clearRect(0,0,W,H); ctx.fillStyle='#fff'; ctx.fillRect(0,0,W,H);
-    var lhH = S.lhAspect > 0 ? Math.round(S.lhAspect*W) : Math.round((S.mTop/297)*H*0.8);
-    ctx.drawImage(img, 0, 0, W, lhH);
-    var cY = Math.round((S.mTop/297)*H);
-    var ml = Math.round((S.mLeft/210)*W); var mr = Math.round((S.mRight/210)*W); var mb = Math.round((S.mBot/297)*H);
-    ctx.fillStyle = 'rgba(90,45,130,0.07)'; ctx.fillRect(ml,cY,W-ml-mr,H-cY-mb);
-    ctx.fillStyle = '#bbb';
-    var lh = Math.round(W/32); var ty = cY+lh*2; var lw = W-ml-mr;
-    [0.65,0.95,0.55,0.88,0.72,0.60,0.90,0.50,0.80,0.70].forEach(function(f) {
-      if(ty<H-mb-lh){ctx.fillRect(ml,ty,Math.round(lw*f),Math.round(lh*0.4));ty+=lh*1.35;}
-    });
-    ctx.strokeStyle='#e74c3c';ctx.lineWidth=2.5;
-    ctx.beginPath();ctx.moveTo(0,cY);ctx.lineTo(W,cY);ctx.stroke();
-    ctx.fillStyle='#e74c3c';ctx.font='bold '+Math.round(W/28)+'px sans-serif';
-    ctx.fillText('content starts here',ml+4,cY-5);
-    var dfl = document.getElementById('dragnF'); if(dfl) dfl.style.top = cY+'px';
-  };
-  img.src = S.lhData;
-}
+// Modal drag
+var draggingModal = false;
+function setupModalDrag() {
+  var wrap = document.getElementById('modalCanvasWrap');
+  var dl = document.getElementById('modalDragLine');
+  if (!wrap || !dl) return;
 
-function openPv() {
-  if(!S.lhData) { alert('Upload a letterhead first.'); return; }
-  document.getElementById('pvModal').classList.add('open');
-  var ps = document.getElementById('pvSlider'); if(ps) ps.value = S.mTop;
-  var pv = document.getElementById('pvTopV'); if(pv) pv.textContent = S.mTop + 'mm';
-  setTimeout(function() { drawPvFull(); initDragFull(); }, 50);
-}
-function closePv() { document.getElementById('pvModal').classList.remove('open'); }
-function onPvSlider() {
-  var ps = document.getElementById('pvSlider'); if(!ps) return;
-  S.mTop = parseInt(ps.value); saveS();
-  var pv = document.getElementById('pvTopV'); if(pv) pv.textContent = S.mTop + 'mm';
-  var el = document.getElementById('mTop'); if(el) el.value = S.mTop;
-  var vl = document.getElementById('mTopV'); if(vl) vl.textContent = S.mTop + 'mm';
-  drawPvFull(); drawPv();
-}
-var _dragF = false;
-function initDragFull() {
-  var dl = document.getElementById('dragnF'); var wrap = document.getElementById('pvwrapF');
-  if(!dl || !wrap) return;
   dl.onmousedown = dl.ontouchstart = function(e) {
-    e.preventDefault(); _dragF = true;
-    var move = function(ev) {
-      if(!_dragF) return;
+    draggingModal = true;
+    e.preventDefault();
+    function onMove(ev) {
+      if (!draggingModal) return;
       var rect = wrap.getBoundingClientRect();
       var cy = ev.touches ? ev.touches[0].clientY : ev.clientY;
-      var pct = Math.max(0.03, Math.min(0.95, (cy-rect.top)/rect.height));
-      S.mTop = Math.max(10, Math.min(150, Math.round(pct*297))); saveS();
-      var ps = document.getElementById('pvSlider'); if(ps) ps.value = S.mTop;
-      var pv = document.getElementById('pvTopV'); if(pv) pv.textContent = S.mTop+'mm';
-      var el = document.getElementById('mTop'); if(el) el.value = S.mTop;
-      var vl = document.getElementById('mTopV'); if(vl) vl.textContent = S.mTop+'mm';
-      drawPvFull(); drawPv();
-    };
-    var up = function() {
-      _dragF = false;
-      document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', up);
-      document.removeEventListener('touchmove', move); document.removeEventListener('touchend', up);
-    };
-    document.addEventListener('mousemove', move); document.addEventListener('mouseup', up);
-    document.addEventListener('touchmove', move, {passive:false}); document.addEventListener('touchend', up);
+      var pct = Math.max(0.03, Math.min(0.95, (cy - rect.top) / rect.height));
+      D.mTop = Math.max(10, Math.min(150, Math.round(pct * 297)));
+      document.getElementById('mTop').value = D.mTop;
+      document.getElementById('mTopV').textContent = D.mTop + 'mm';
+      document.getElementById('modalSlider').value = D.mTop;
+      document.getElementById('modalTopV').textContent = D.mTop + 'mm';
+      saveData();
+      drawModalPreview();
+      drawPreview();
+    }
+    function onUp() {
+      draggingModal = false;
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      document.removeEventListener('touchmove', onMove);
+      document.removeEventListener('touchend', onUp);
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('touchend', onUp);
   };
 }
 
-function buildSum() {
-  var names = S.partners.map(function(p){return p.name;}).filter(Boolean).join(', ') || '--';
-  var el = document.getElementById('sumContent'); if(!el) return;
-  el.innerHTML = '<div class="sr"><span class="sk">Firm</span><span class="sv">' + (S.firmName||'--') + '</span></div>'
-    + '<div class="sr"><span class="sk">GSTIN</span><span class="sv">' + (S.gstin||'--') + '</span></div>'
-    + '<div class="sr"><span class="sk">Deed and Resolution Date</span><span class="sv">' + (fd(S.deedDate)||'--') + '</span></div>'
-    + '<div class="sr"><span class="sk">Partners (' + S.partners.length + ')</span><span class="sv">' + names + '</span></div>'
-    + '<div class="sr"><span class="sk">Auth. Signatory</span><span class="sv">' + (S.authP||'--') + '</span></div>'
-    + '<div class="sr"><span class="sk">Meeting</span><span class="sv">' + (fd(S.meetDate)||'--') + ' at ' + (ft(S.meetTime)||'--') + '</span></div>'
-    + '<div class="sr"><span class="sk">BO Date</span><span class="sv">' + (fd(S.boDate)||'--') + '</span></div>'
-    + '<div class="sr"><span class="sk">Letterhead</span><span class="sv">' + (S.lhData ? 'Uploaded (top margin: '+S.mTop+'mm)' : 'Not uploaded') + '</span></div>'
-    + '<div class="sr"><span class="sk">Agent</span><span class="sv">' + (S.agentName||'--') + '</span></div>';
+function openFullPreview() {
+  if (!D.lhData) { alert('Please upload a letterhead first.'); return; }
+  document.getElementById('previewModal').classList.add('open');
+  document.getElementById('modalSlider').value = D.mTop;
+  document.getElementById('modalTopV').textContent = D.mTop + 'mm';
+  setTimeout(function() { drawModalPreview(); setupModalDrag(); }, 50);
 }
 
+function closeFullPreview() {
+  document.getElementById('previewModal').classList.remove('open');
+}
+
+function onModalSlider() {
+  D.mTop = parseInt(document.getElementById('modalSlider').value);
+  document.getElementById('modalTopV').textContent = D.mTop + 'mm';
+  document.getElementById('mTop').value = D.mTop;
+  document.getElementById('mTopV').textContent = D.mTop + 'mm';
+  saveData();
+  drawModalPreview();
+  drawPreview();
+}
+
+// ============================================================
+// SUMMARY
+// ============================================================
+function buildSummary() {
+  var names = D.partners.map(function(p) { return p.name; }).filter(Boolean);
+  var el = document.getElementById('summaryContent');
+  if (!el) return;
+  el.innerHTML =
+    row('Firm', D.firmName) +
+    row('GSTIN', D.gstin) +
+    row('Deed & Resolution Date', formatDate(D.deedDate)) +
+    row('Partners (' + D.partners.length + ')', names.join(', ')) +
+    row('Authorised Signatory', D.authP) +
+    row('Meeting', formatDate(D.meetDate) + ' at ' + formatTime(D.meetTime)) +
+    row('Meeting Location', D.meetLoc) +
+    row('BO Declaration Date', formatDate(D.boDate)) +
+    row('Letterhead', D.lhData ? 'Uploaded (top margin: ' + D.mTop + 'mm)' : 'Not uploaded') +
+    row('Agent', D.agentName);
+}
+
+function row(k, v) {
+  return '<div class="summary-row"><span class="key">' + k + '</span><span class="val">' + (v || '--') + '</span></div>';
+}
+
+// ============================================================
+// DATE / TIME HELPERS
+// ============================================================
 var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-function fd(d) {
-  if(!d) return '';
-  try { var p = d.split('-'); return p[2] + ' ' + MONTHS[parseInt(p[1])-1] + ' ' + p[0]; } catch(e) { return d; }
-}
-function ft(t) {
-  if(!t) return '';
-  try { var p = t.split(':'); var h = parseInt(p[0]); return ((h%12)||12) + ':' + p[1] + ' ' + (h>=12?'PM':'AM'); } catch(e) { return t; }
+
+function formatDate(d) {
+  if (!d) return '';
+  try {
+    var parts = d.split('-');
+    return parts[2] + ' ' + MONTHS[parseInt(parts[1]) - 1] + ' ' + parts[0];
+  } catch(e) { return d; }
 }
 
-function mkPDF() { return new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait'}); }
-function cW() { return 210 - S.mLeft - S.mRight; }
-function placeLH(doc) {
-  if(S.lhData) {
-    var lhH = S.lhAspect > 0 ? Math.round(S.lhAspect*210) : S.mTop;
-    try { doc.addImage(S.lhData,'JPEG',0,0,210,lhH); }
-    catch(e) { try { doc.addImage(S.lhData,'PNG',0,0,210,lhH); } catch(e2) {} }
-  }
-  return S.mTop;
+function formatTime(t) {
+  if (!t) return '';
+  try {
+    var parts = t.split(':');
+    var h = parseInt(parts[0]);
+    return ((h % 12) || 12) + ':' + parts[1] + ' ' + (h >= 12 ? 'PM' : 'AM');
+  } catch(e) { return t; }
 }
-function newPg(doc) { doc.addPage(); return placeLH(doc); }
-function wt(doc, text, x, y, opts) {
+
+// ============================================================
+// PDF GENERATION
+// ============================================================
+function makePDF() {
+  return new window.jspdf.jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+}
+
+function contentWidth() { return 210 - D.mLeft - D.mRight; }
+
+function placeLetterhead(doc) {
+  if (D.lhData) {
+    var lhH = D.lhAspect > 0 ? Math.round(D.lhAspect * 210) : D.mTop;
+    try { doc.addImage(D.lhData, 'JPEG', 0, 0, 210, lhH); }
+    catch(e) { try { doc.addImage(D.lhData, 'PNG', 0, 0, 210, lhH); } catch(e2) {} }
+  }
+  return D.mTop;
+}
+
+function newPage(doc) {
+  doc.addPage();
+  return placeLetterhead(doc);
+}
+
+function writeText(doc, text, x, y, opts) {
   var o = opts || {};
-  var w = o.w || cW(); var sz = o.sz || 10; var bold = o.bold || false;
-  var align = o.align || 'left'; var color = o.color || [20,15,30]; var lh = o.lh || 5.5;
-  doc.setFontSize(sz); doc.setFont('helvetica', bold?'bold':'normal');
+  var w = o.w || contentWidth();
+  var sz = o.sz || 10;
+  var bold = o.bold || false;
+  var align = o.align || 'left';
+  var color = o.color || [20, 15, 30];
+  var lh = o.lh || 5.5;
+
+  doc.setFontSize(sz);
+  doc.setFont('helvetica', bold ? 'bold' : 'normal');
   doc.setTextColor(color[0], color[1], color[2]);
-  var lines = doc.splitTextToSize(String(text||''), w);
-  doc.text(lines, x, y, {align:align});
+  var lines = doc.splitTextToSize(String(text || ''), w);
+  doc.text(lines, x, y, { align: align });
   return y + lines.length * lh;
 }
-function ck(doc, y, need) {
-  var n = need || 20;
-  if(y + n > 297 - S.mBot) return newPg(doc);
+
+function checkPageBreak(doc, y, needed) {
+  if (y + (needed || 20) > 297 - D.mBot) return newPage(doc);
   return y;
 }
-function sigBlock(doc, names, y, sub) {
-  if(!names || !names.length) return y;
+
+function signatureBlock(doc, names, y, subLabel) {
+  if (!names || names.length === 0) return y;
   var cols = Math.min(names.length, 4);
-  var cw = cW() / 4; var L = S.mLeft;
-  y = ck(doc, y, 40);
-  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(20,15,30);
-  for(var i=0; i<cols; i++) doc.text('Signature', L+i*cw+cw/2, y, {align:'center'});
+  var cw = contentWidth() / 4;
+  var L = D.mLeft;
+  y = checkPageBreak(doc, y, 40);
+
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(20, 15, 30);
+  for (var i = 0; i < cols; i++) {
+    doc.text('Signature', L + i * cw + cw / 2, y, { align: 'center' });
+  }
   y += 13;
-  doc.setDrawColor(120,120,120);
-  for(var i=0; i<cols; i++) doc.line(L+i*cw+3, y, L+i*cw+cw-3, y);
-  y += 5; doc.setFontSize(7.5);
-  for(var i=0; i<cols; i++) {
-    var txt = names[i] + (sub ? '
-' + sub : '');
-    var ls = doc.splitTextToSize(txt, cw-4);
-    doc.text(ls, L+i*cw+cw/2, y, {align:'center'});
+  doc.setDrawColor(120, 120, 120);
+  for (var i = 0; i < cols; i++) {
+    doc.line(L + i * cw + 3, y, L + i * cw + cw - 3, y);
+  }
+  y += 5;
+  doc.setFontSize(7.5);
+  for (var i = 0; i < cols; i++) {
+    var txt = names[i] + (subLabel ? '
+' + subLabel : '');
+    var lines = doc.splitTextToSize(txt, cw - 4);
+    doc.text(lines, L + i * cw + cw / 2, y, { align: 'center' });
   }
   return y + 14;
 }
-function addFooter(doc) {
-  var pg = doc.internal.getNumberOfPages();
-  for(var i=1; i<=pg; i++) {
+
+function addPageFooter(doc) {
+  var total = doc.internal.getNumberOfPages();
+  for (var i = 1; i <= total; i++) {
     doc.setPage(i);
-    doc.setFontSize(7); doc.setFont('helvetica','normal'); doc.setTextColor(170,170,170);
-    doc.text('Generated by: ' + S.agentName + ' | Date: ' + new Date().toLocaleDateString('en-IN'), S.mLeft, 291);
+    doc.setFontSize(7);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(160, 160, 160);
+    doc.text('Generated by: ' + D.agentName + '  |  Date: ' + new Date().toLocaleDateString('en-IN'), D.mLeft, 291);
   }
 }
 
+// ============ DOC 1: PARTNER RESOLUTION ============
 function buildDoc1() {
-  var doc = mkPDF(); var L = S.mLeft;
-  var y = placeLH(doc);
-  var pAddr = S.sameP ? S.regAddr : (S.prinAddr || S.regAddr);
-  doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(20,15,30);
-  doc.text('TO WHOMSOEVER IT MAY CONCERN', 105, y, {align:'center'}); y += 9;
+  var doc = makePDF();
+  var L = D.mLeft;
+  var y = placeLetterhead(doc);
+
+  doc.setFontSize(11);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(20, 15, 30);
+  doc.text('TO WHOMSOEVER IT MAY CONCERN', 105, y, { align: 'center' });
+  y += 9;
+
+  var pAddr = D.sameP ? D.regAddr : (D.prinAddr || D.regAddr);
   var heading = 'RESOLUTION OF THE PARTNERS PASSED AT THE MEETING OF THE PARTNERS OF
-'
-    + S.firmName.toUpperCase() + ' ("FIRM") HELD ON ' + fd(S.meetDate)
-    + ' AT ' + ft(S.meetTime) + ' AT ' + S.meetLoc;
-  y = wt(doc, heading, L, y, {sz:10,bold:true,lh:6}); y += 4;
-  var firmBlock = S.firmName + ' having its registered office address at ' + S.regAddr
-    + ' and having its principal place of operation/office at same '
-    + (S.sameP ? '[tick]' : '[ ]') + (S.sameP ? '' : ' OR ' + pAddr);
-  y = wt(doc, firmBlock, L, y, {sz:10}); y += 6;
-  y = wt(doc, 'PRESENT:', L, y, {sz:10,bold:true}); y += 4;
-  var pnames = S.presentNames || [];
-  pnames.forEach(function(n, i) { y = wt(doc, (i+1) + '.   ' + n, L+4, y, {sz:10}); y += 1.5; });
-  y = wt(doc, '(List of partners present during the resolution)', L, y, {sz:9,color:[110,110,110]}); y += 7;
-  y = ck(doc, y, 50);
-  y = wt(doc, 'RESOLVED THAT Mr/Mrs ' + S.authP + ', <Partner>, be and is hereby authorized, to act on behalf of the Firm and to execute/sign all necessary applications/documents for the purpose of opening and operating a business account with PhonePe Limited.', L, y, {sz:10}); y += 6;
-  y = ck(doc, y, 40);
-  y = wt(doc, 'RESOLVED FURTHER THAT all acts, deeds, and things done by the said Partner(s) in this regard shall be binding upon the Firm and all its partners and shall remain in force. RESOLVED FURTHER THAT this resolution shall remain in force until a written notice of its withdrawal or amendment is served upon and acknowledged by PhonePe Limited, and that a certified true copy of this resolution be furnished to PhonePe Limited for their records.', L, y, {sz:10}); y += 14;
-  y = sigBlock(doc, S.presentNames || [], y, 'who was present
+' +
+    D.firmName.toUpperCase() + ' ("FIRM") HELD ON ' + formatDate(D.meetDate) +
+    ' AT ' + formatTime(D.meetTime) + ' AT ' + D.meetLoc;
+  y = writeText(doc, heading, L, y, { sz: 10, bold: true, lh: 6 });
+  y += 4;
+
+  var firmBlock = D.firmName + ' having its <registered office address> at ' + D.regAddr +
+    ' and having its <principal place of operation/office> at same ' +
+    (D.sameP ? '[tick]' : '[ ]') + (D.sameP ? '' : ' OR ' + pAddr);
+  y = writeText(doc, firmBlock, L, y, { sz: 10 });
+  y += 6;
+
+  y = writeText(doc, 'PRESENT:', L, y, { sz: 10, bold: true });
+  y += 4;
+  var pNames = D.presentNames || [];
+  for (var i = 0; i < pNames.length; i++) {
+    y = writeText(doc, (i + 1) + '.   ' + pNames[i], L + 4, y, { sz: 10 });
+    y += 1.5;
+  }
+  y = writeText(doc, '(List of partners present during the resolution)', L, y, { sz: 9, color: [110, 110, 110] });
+  y += 7;
+
+  y = checkPageBreak(doc, y, 50);
+  y = writeText(doc, 'RESOLVED THAT Mr/Mrs ' + D.authP + ', <Partner>, be and is hereby authorized, to act on behalf of the Firm and to execute/sign all necessary applications/documents for the purpose of opening and operating a business account with PhonePe Limited.', L, y, { sz: 10 });
+  y += 6;
+
+  y = checkPageBreak(doc, y, 40);
+  y = writeText(doc, 'RESOLVED FURTHER THAT all acts, deeds, and things done by the said Partner(s) in this regard shall be binding upon the Firm and all its partners and shall remain in force. RESOLVED FURTHER THAT this resolution shall remain in force until a written notice of its withdrawal or amendment is served upon and acknowledged by PhonePe Limited, and that a certified true copy of this resolution be furnished to PhonePe Limited for their records.', L, y, { sz: 10 });
+  y += 14;
+
+  y = signatureBlock(doc, D.presentNames || [], y, 'who was present
 during resolution');
   y += 4;
-  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(20,15,30);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(20, 15, 30);
   doc.text('Seal of the Firm', L, y);
-  addFooter(doc); return doc;
+
+  addPageFooter(doc);
+  return doc;
 }
 
+// ============ DOC 2: PARTNER DECLARATION ============
 function buildDoc2() {
-  var doc = mkPDF(); var L = S.mLeft;
-  var y = placeLH(doc);
-  var isReg = (S.firmReg||'registered') === 'registered';
-  var boY = (S.boOwn||'yes') === 'yes';
-  doc.setFontSize(13); doc.setFont('helvetica','bold'); doc.setTextColor(20,15,30);
-  doc.text('Declaration', 105, y, {align:'center'}); y += 10;
-  y = wt(doc, 'I/we, the undersigned individuals, hereby personally, jointly, and severally undertake and declare that:', L, y, {sz:10}); y += 7;
-  y = wt(doc, '1.  Our firm ' + S.firmName + ' is constituted as a partnership firm and it is', L, y, {sz:10}); y += 6;
-  function tb(x, cy, chk) {
-    doc.rect(x, cy-3.5, 4, 4);
-    if(chk) { doc.setFont('helvetica','bold'); doc.text('X', x+0.8, cy-0.2); doc.setFont('helvetica','normal'); }
+  var doc = makePDF();
+  var L = D.mLeft;
+  var y = placeLetterhead(doc);
+  var isReg = (D.firmReg || 'registered') === 'registered';
+  var boYes = (D.boOwn || 'yes') === 'yes';
+
+  doc.setFontSize(13);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(20, 15, 30);
+  doc.text('Declaration', 105, y, { align: 'center' });
+  y += 10;
+
+  y = writeText(doc, 'I/we, the undersigned individuals, hereby personally, jointly, and severally undertake and declare that:', L, y, { sz: 10 });
+  y += 7;
+
+  y = writeText(doc, '1.  Our firm ' + D.firmName + ' is constituted as a partnership firm and it is', L, y, { sz: 10 });
+  y += 6;
+
+  function tickBox(x, ty, checked) {
+    doc.rect(x, ty - 3.5, 4, 4);
+    if (checked) {
+      doc.setFont('helvetica', 'bold');
+      doc.text('X', x + 0.8, ty - 0.2);
+      doc.setFont('helvetica', 'normal');
+    }
   }
-  doc.setFontSize(10); doc.setFont('helvetica','normal');
-  tb(L+4, y, isReg); doc.text('Registered', L+10, y); y += 7;
-  y = wt(doc, '      Whether there is/are any natural person(s), acting alone or through other juridical persons, with more than 10% ownership/entitlement to capital/profits, or who exercise control through other means.', L, y, {sz:9.5}); y += 5;
-  tb(L+8, y, isReg&&boY); doc.setFontSize(10); doc.text('Yes', L+14, y); y += 7;
-  tb(L+8, y, isReg&&!boY); doc.text('No', L+14, y); y += 9;
-  tb(L+4, y, !isReg); doc.text('Unregistered', L+10, y); y += 7;
-  y = wt(doc, '      Whether there is/are any natural person(s), acting alone or through other juridical persons, with more than 15% ownership/entitlement to capital/profits, or who exercise control through other means.', L, y, {sz:9.5}); y += 5;
-  tb(L+8, y, !isReg&&boY); doc.setFontSize(10); doc.text('Yes', L+14, y); y += 7;
-  tb(L+8, y, !isReg&&!boY); doc.text('No', L+14, y); y += 9;
-  y = ck(doc, y, 40);
-  y = wt(doc, '2.  If there is/are no natural person(s) as per the responses provided under declaration (1) hereinabove, then we declare that the authorised signatory identified in the Resolution (defined below) is the senior managing official and be considered as the beneficial owner of our firm.', L, y, {sz:10}); y += 6;
-  y = ck(doc, y, 15);
-  y = wt(doc, '3.  The contents of the resolution of the partners dated ' + fd(S.deedDate) + ' ("Resolution") are true and valid.', L, y, {sz:10}); y += 6;
-  y = ck(doc, y, 15);
-  y = wt(doc, '4.  The list of partners constituting the partnership firm and their respective details, as provided in the partnership deed dated ' + fd(S.deedDate) + ' ("Partnership Deed"), are true, complete, current, and valid.', L, y, {sz:10}); y += 6;
-  y = ck(doc, y, 15);
-  y = wt(doc, '5.  The percentage of ownership and/or entitlement to capital or profits of the partners as specified in the Partnership Deed is true, complete, current, and valid.', L, y, {sz:10}); y += 8;
-  y = ck(doc, y, 45);
-  y = wt(doc, "In consideration of PhonePe agreeing to rely on the Resolution, the Partnership Deed, and this declaration, I/we hereby personally, jointly, and severally undertake to indemnify and hold PhonePe harmless against all damages, liabilities, claims, demands, actions, proceedings, losses, costs (including legal costs), expenses, and all other liabilities of whatsoever nature or description, arising out of or in connection with PhonePe's reliance on the said Resolution, Partnership Deed, and this declaration.", L, y, {sz:10}); y += 14;
-  y = sigBlock(doc, S.decSignNames || [], y, 'who signed the
+
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  tickBox(L + 4, y, isReg);
+  doc.text('Registered', L + 10, y);
+  y += 7;
+
+  y = writeText(doc, '      Whether there is/are any natural person(s), acting alone or through other juridical persons, with more than 10% ownership/entitlement to capital/profits, or who exercise control through other means.', L, y, { sz: 9.5 });
+  y += 5;
+  tickBox(L + 8, y, isReg && boYes); doc.setFontSize(10); doc.text('Yes', L + 14, y); y += 7;
+  tickBox(L + 8, y, isReg && !boYes); doc.text('No', L + 14, y); y += 9;
+
+  tickBox(L + 4, y, !isReg);
+  doc.text('Unregistered', L + 10, y);
+  y += 7;
+
+  y = writeText(doc, '      Whether there is/are any natural person(s), acting alone or through other juridical persons, with more than 15% ownership/entitlement to capital/profits, or who exercise control through other means.', L, y, { sz: 9.5 });
+  y += 5;
+  tickBox(L + 8, y, !isReg && boYes); doc.setFontSize(10); doc.text('Yes', L + 14, y); y += 7;
+  tickBox(L + 8, y, !isReg && !boYes); doc.text('No', L + 14, y); y += 9;
+
+  y = checkPageBreak(doc, y, 40);
+  y = writeText(doc, '2.  If there is/are no natural person(s) as per the responses provided under declaration (1) hereinabove, then we declare that the authorised signatory identified in the Resolution (defined below) is the senior managing official and be considered as the beneficial owner of our firm.', L, y, { sz: 10 });
+  y += 6;
+
+  y = checkPageBreak(doc, y, 15);
+  y = writeText(doc, '3.  The contents of the resolution of the partners dated ' + formatDate(D.deedDate) + ' ("Resolution") are true and valid.', L, y, { sz: 10 });
+  y += 6;
+
+  y = checkPageBreak(doc, y, 15);
+  y = writeText(doc, '4.  The list of partners constituting the partnership firm and their respective details, as provided in the partnership deed dated ' + formatDate(D.deedDate) + ' ("Partnership Deed"), are true, complete, current, and valid.', L, y, { sz: 10 });
+  y += 6;
+
+  y = checkPageBreak(doc, y, 15);
+  y = writeText(doc, '5.  The percentage of ownership and/or entitlement to capital or profits of the partners as specified in the Partnership Deed is true, complete, current, and valid.', L, y, { sz: 10 });
+  y += 8;
+
+  y = checkPageBreak(doc, y, 45);
+  y = writeText(doc, "In consideration of PhonePe agreeing to rely on the Resolution, the Partnership Deed, and this declaration, I/we hereby personally, jointly, and severally undertake to indemnify and hold PhonePe harmless against all damages, liabilities, claims, demands, actions, proceedings, losses, costs (including legal costs), expenses, and all other liabilities of whatsoever nature or description, arising out of or in connection with PhonePe's reliance on the said Resolution, Partnership Deed, and this declaration.", L, y, { sz: 10 });
+  y += 14;
+
+  y = signatureBlock(doc, D.decSignNames || [], y, 'who signed the
 resolution');
-  addFooter(doc); return doc;
+  addPageFooter(doc);
+  return doc;
 }
 
+// ============ DOC 3: BO DECLARATION ============
 function buildDoc3() {
-  var doc = mkPDF(); var L = S.mLeft; var Wc = cW();
-  var y = placeLH(doc);
-  doc.setFontSize(12); doc.setFont('helvetica','bold'); doc.setTextColor(20,15,30);
-  doc.text('DECLARATION OF BENEFICIAL OWNERSHIP', 105, y, {align:'center'}); y += 6;
-  y = wt(doc, '(Not applicable for Individual/ Sole Proprietor/ HUF/ Government Departments / Public Sector Undertaking / Local Authority)', 105, y, {sz:7.5,align:'center',color:[100,100,100],lh:4.5,w:170}); y += 7;
-  function trow(n, label, val, y) {
-    doc.setDrawColor(190,190,190);
-    var vlines = doc.splitTextToSize(val, Wc-72); var llines = doc.splitTextToSize(label, 54);
-    var rh = Math.max(9, Math.max(vlines.length, llines.length)*4.5+4);
-    doc.rect(L,y-5,10,rh); doc.rect(L+10,y-5,60,rh); doc.rect(L+70,y-5,Wc-70,rh);
-    doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.text(n, L+1, y);
-    doc.setFont('helvetica','normal'); doc.text(llines, L+11, y); doc.text(vlines, L+71, y);
+  var doc = makePDF();
+  var L = D.mLeft;
+  var Wc = contentWidth();
+  var y = placeLetterhead(doc);
+
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(20, 15, 30);
+  doc.text('DECLARATION OF BENEFICIAL OWNERSHIP', 105, y, { align: 'center' });
+  y += 6;
+  y = writeText(doc, '(Not applicable for Individual/ Sole Proprietor/ HUF/ Government Departments / Public Sector Undertaking / Local Authority)', 105, y, { sz: 7.5, align: 'center', color: [100,100,100], lh: 4.5, w: 170 });
+  y += 7;
+
+  function tableRow(num, label, val, y) {
+    doc.setDrawColor(190, 190, 190);
+    var vl = doc.splitTextToSize(val, Wc - 72);
+    var ll = doc.splitTextToSize(label, 54);
+    var rh = Math.max(9, Math.max(vl.length, ll.length) * 4.5 + 4);
+    doc.rect(L, y - 5, 10, rh);
+    doc.rect(L + 10, y - 5, 60, rh);
+    doc.rect(L + 70, y - 5, Wc - 70, rh);
+    doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.text(num, L + 1, y);
+    doc.setFont('helvetica', 'normal'); doc.text(ll, L + 11, y); doc.text(vl, L + 71, y);
     return y + rh + 1;
   }
-  y = trow('I','Name of the entity', S.firmName||'', y);
-  y = trow('II','Registered address', S.regAddr||'', y);
-  y = trow('III','Type of entity', 'Partnership Firm (tick)', y);
-  y = trow('IV','Date of declaration', fd(S.boDate)||'', y); y += 6;
-  var cat = S.boCat || '1';
-  var catTxt = cat === '1'
-    ? '(tick) Category 1 - We hereby declare that following persons/entity noted in the below table own 10%/15% or more interest.'
-    : '(tick) Category 2 - We hereby declare that no persons/entity possessing 10%/15% or more interest or control through other means are identified. Details of natural person(s) holding the position of senior management officials are provided below.';
-  y = wt(doc, catTxt, L, y, {sz:9.5,lh:5.2}); y += 4;
-  y = wt(doc, 'The Legal Entity as stated above hereby confirms and declares the following on: ' + fd(S.boDate), L, y, {sz:10}); y += 5;
-  y = wt(doc, 'The details are as follows:', L, y, {sz:10}); y += 6;
-  y = ck(doc, y, 55);
-  var colDefs = [{h:'SR
-No',r:.05},{h:'Name',r:.13},{h:'Address
-& PIN',r:.17},{h:'BO Type /
-Desig.',r:.12},{h:'DOB',r:.09},{h:'PAN /
-ID No.',r:.10},{h:'Proof of
-Address',r:.10},{h:'Nationality',r:.09},{h:'DIN',r:.07},{h:'%
-Interest',r:.08}];
+
+  y = tableRow('I', 'Name of the entity', D.firmName || '', y);
+  y = tableRow('II', 'Registered address', D.regAddr || '', y);
+  y = tableRow('III', 'Type of entity', 'Partnership Firm [tick]', y);
+  y = tableRow('IV', 'Date of declaration', formatDate(D.boDate) || '', y);
+  y += 6;
+
+  var catTxt = (D.boCat || '1') === '1'
+    ? '[tick] Category 1 - We hereby declare that following persons/entity noted in the below table own 10%/15% or more interest.'
+    : '[tick] Category 2 - We hereby declare that no persons/entity possessing 10%/15% or more interest or control through other means are identified. Details of natural person(s) holding the position of senior management officials are provided below.';
+  y = writeText(doc, catTxt, L, y, { sz: 9.5, lh: 5.2 });
+  y += 4;
+  y = writeText(doc, 'The Legal Entity as stated above hereby confirms and declares the following on: ' + formatDate(D.boDate), L, y, { sz: 10 });
+  y += 5;
+  y = writeText(doc, 'The details are as follows:', L, y, { sz: 10 });
+  y += 6;
+
+  y = checkPageBreak(doc, y, 55);
+  var colDefs = [
+    { h: 'SR
+No', r: 0.05 }, { h: 'Name', r: 0.13 }, { h: 'Address
+& PIN', r: 0.17 },
+    { h: 'BO Type /
+Desig.', r: 0.12 }, { h: 'DOB', r: 0.09 }, { h: 'PAN /
+ID No.', r: 0.10 },
+    { h: 'Proof of
+Address', r: 0.10 }, { h: 'Nationality', r: 0.09 }, { h: 'DIN', r: 0.07 }, { h: '%
+Interest', r: 0.08 }
+  ];
   var cws = colDefs.map(function(c) { return c.r * Wc; });
-  var cx = L; var hh = 12;
-  doc.setFontSize(6.5); doc.setFont('helvetica','bold');
+  var cx = L;
+  var hh = 12;
+  doc.setFontSize(6.5);
+  doc.setFont('helvetica', 'bold');
   colDefs.forEach(function(c, i) {
-    doc.rect(cx, y-hh+2, cws[i], hh);
-    c.h.split('
-').forEach(function(line, li) { doc.text(line, cx+cws[i]/2, y-hh+5.5+li*3.5, {align:'center'}); });
+    doc.rect(cx, y - hh + 2, cws[i], hh);
+    var parts = c.h.split('
+');
+    parts.forEach(function(part, pi) {
+      doc.text(part, cx + cws[i] / 2, y - hh + 5.5 + pi * 3.5, { align: 'center' });
+    });
     cx += cws[i];
   });
   y += 3;
-  doc.setFont('helvetica','normal'); doc.setFontSize(6.5);
-  S.partners.forEach(function(p, idx) {
-    var dob = p.dob ? fd(p.dob) : '';
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(6.5);
+  D.partners.forEach(function(p, idx) {
     var addr = (p.address || '') + (p.pin ? ', ' + p.pin : '');
-    var cells = [String(idx+1), p.name||'', addr, p.designation||'Partner', dob, p.pan||'', p.ovd||'', p.nationality||'Indian', p.din||'-', (p.ownership||'')+'%'];
+    var cells = [
+      String(idx + 1), p.name || '', addr, p.designation || 'Partner',
+      p.dob ? formatDate(p.dob) : '', p.pan || '', p.ovd || '',
+      p.nationality || 'Indian', p.din || '-', (p.ownership || '') + '%'
+    ];
     var rh = 8;
-    cells.forEach(function(cell, ci) { var ls = doc.splitTextToSize(String(cell), cws[ci]-1.5); rh = Math.max(rh, ls.length*3.5+3); });
-    y = ck(doc, y, rh+4);
+    cells.forEach(function(cell, ci) {
+      var ls = doc.splitTextToSize(String(cell), cws[ci] - 1.5);
+      rh = Math.max(rh, ls.length * 3.5 + 3);
+    });
+    y = checkPageBreak(doc, y, rh + 4);
     cx = L;
     cells.forEach(function(cell, ci) {
-      doc.rect(cx, y-2, cws[ci], rh);
-      doc.text(doc.splitTextToSize(String(cell), cws[ci]-1.5), cx+1, y+2);
+      doc.rect(cx, y - 2, cws[ci], rh);
+      doc.text(doc.splitTextToSize(String(cell), cws[ci] - 1.5), cx + 1, y + 2);
       cx += cws[ci];
     });
     y += rh;
   });
-  y += 9; y = ck(doc, y, 30);
-  y = wt(doc, 'We acknowledge and confirm that the information provided above is true and correct to the best of our knowledge and belief.', L, y, {sz:10}); y += 8;
-  y = wt(doc, 'Authorised Signatory/ies: (Refer note D for signature requirement)', L, y, {sz:10,bold:true}); y += 7;
-  var bsn = S.boSignNames || [];
-  bsn.slice(0,4).forEach(function(n, i) {
-    y = ck(doc, y, 11); doc.setFontSize(10); doc.setFont('helvetica','normal');
-    doc.text((i+1) + '.  ..............................  (' + n + ', Signature with Stamp)', L+4, y); y += 9;
+  y += 9;
+
+  y = checkPageBreak(doc, y, 30);
+  y = writeText(doc, 'We acknowledge and confirm that the information provided above is true and correct to the best of our knowledge and belief.', L, y, { sz: 10 });
+  y += 8;
+  y = writeText(doc, 'Authorised Signatory/ies: (Refer note D for signature requirement)', L, y, { sz: 10, bold: true });
+  y += 7;
+  (D.boSignNames || []).slice(0, 4).forEach(function(n, i) {
+    y = checkPageBreak(doc, y, 11);
+    doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+    doc.text((i + 1) + '.  ..............................  (' + n + ', Signature with Stamp)', L + 4, y);
+    y += 9;
   });
-  y = newPg(doc);
-  doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(20,15,30);
+
+  // NOTES - new page
+  y = newPage(doc);
+  doc.setFontSize(11); doc.setFont('helvetica', 'bold'); doc.setTextColor(20, 15, 30);
   doc.text('Notes:', L, y); y += 8;
+
   var notes = [
-    [1,'A. Controlling ownership interest means:'], [0,''],
-    [0,'Companies (Public, Private) and LLP: more than 10%  |  Partnership Firm: more than 10%'],
-    [0,'Trust: 10% or more  |  Unincorporated association or Body of individuals: more than 15%'], [0,''],
-    [0,'a. Ownership of or entitlement to more than 10% of the share capital of the juridical person, where the juridical person is a company. Control shall include the right to appoint a majority of the directors or to control the management or policy decisions.'],
-    [0,'b. Ownership of or entitlement to more than 10% of the capital or profits where the juridical person is a partnership firm or LLP.'],
-    [0,'c. Ownership of or entitlement to more than 15% of the property or capital or profits where the juridical person is an unincorporated association or body of individuals.'],
-    [0,'d. Where the customer is a trust, identification of beneficial owners shall include the author, trustee, beneficiaries with 10% or more interest, and any other natural person exercising ultimate effective control.'],
-    [0,'Where no natural person is identified under (a) to (d) above, the beneficial owner is the natural person holding the position of senior managing official.'], [0,''],
-    [1,'B. Beneficial Ownership Declaration to provide details of:'],
-    [0,'Partnership Firm or LLP: Natural persons or partners  |  Trust: Trustees, Settlor, Protector, Beneficiary, Author'],
-    [0,'Foundation: Founder managers or Directors  |  Society, Club, Association: Members'],
-    [0,'Pvt Ltd or Unlisted Public Ltd: Shareholder, Directors, Other Beneficiaries  |  Foreign Entity: Shareholder, Director, Other Beneficiaries'], [0,''],
-    [1,'C. Signature on the Declaration form:'],
-    [0,'Partnership Firm, LLP, Trust, Foundation, Society, Club: Any two Authorised Signatories or as per Mode of Operations should sign.'],
-    [0,'Association: All Authorised Signatories should sign.'],
-    [0,'Pvt Ltd or Unlisted Public Ltd: Any two Directors or Company Secretary should sign.'],
-    [0,'Foreign Entity: All Authorised Signatories should sign.  |  Publicly listed company: Authorized Signatory should sign.'], [0,''],
-    [1,'D. Other Instructions:'],
-    [0,'1. ID documents: Individual Indian - PAN  |  Foreign National - Passport  |  Foreign entity - Valid Establishment document.'],
-    [0,'2. Proof of Address: Individual Indian - Voter ID or Driving Licence  |  Foreign National - Passport  |  Entity - Valid Establishment document.'],
-    [0,'3. PAN Number to be provided for Residents and Entities registered in India.'],
-    [0,'4. If minor, valid age proof to be provided.'],
-    [0,'5. Self-attested copy of Officially Valid Document as per prevailing KYC Circular applicable to Individuals.'],
-    [0,'6. The address mentioned should be of Residence for Individuals.']
+    [1, 'A. Controlling ownership interest means:'], [0, ''],
+    [0, 'Companies (Public, Private) and LLP: more than 10%'],
+    [0, 'Partnership Firm: more than 10%'],
+    [0, 'Trust: 10% or more'],
+    [0, 'Unincorporated association or Body of individuals: more than 15%'], [0, ''],
+    [0, 'a. Ownership of or entitlement to more than 10% of the share capital of the juridical person, where the juridical person is a company. Control shall include the right to appoint a majority of the directors or to control the management or policy decisions, including by virtue of their shareholding or management rights or shareholders agreements or voting agreements.'], [0, ''],
+    [0, 'b. Ownership of or entitlement to more than 10% of the capital or profits of the juridical person where the juridical person is a partnership firm, LLP.'], [0, ''],
+    [0, 'c. Ownership of or entitlement to more than 15% of the property or capital or profits where the juridical person is an unincorporated association or body of individuals.'], [0, ''],
+    [0, 'd. Where the customer is a trust, identification of beneficial owners shall include the author, trustee, beneficiaries with 10% or more interest, and any other natural person exercising ultimate effective control.'], [0, ''],
+    [0, 'Where no natural person is identified under (a) to (d) above, the beneficial owner is the natural person holding the position of senior managing official.'], [0, ''],
+    [1, 'B. Beneficial Ownership Declaration to provide details of:'],
+    [0, 'a. Partnership Firm or LLP: Natural persons or partners'],
+    [0, 'b. Trust: Trustees, Settlor, Protector, Beneficiary, Author'],
+    [0, 'c. Foundation: Founder managers or Directors'],
+    [0, 'd. Society, Club, Association: Members'],
+    [0, 'e. Pvt Ltd or Unlisted Public Ltd: Shareholder, Directors, Other Beneficiaries'],
+    [0, 'f. Foreign Entity: Shareholder, Director, Other Beneficiaries'], [0, ''],
+    [1, 'C. Signature on the Declaration form:'],
+    [0, 'a. Partnership Firm, LLP, Trust, Foundation, Society, Club: Any two Authorised Signatories or as per Mode of Operations should sign.'],
+    [0, 'b. Association: All Authorised Signatories should sign.'],
+    [0, 'c. Pvt Ltd or Unlisted Public Ltd: Any two Directors or Company Secretary should sign.'],
+    [0, 'd. Foreign Entity: All Authorised Signatories should sign.'],
+    [0, 'e. Publicly listed company: Authorized Signatory should sign.'], [0, ''],
+    [1, 'D. Other Instructions:'],
+    [0, '1. ID documents: Individual (Indian) - PAN | Foreign National - Passport | Foreign entity - Valid Establishment document.'],
+    [0, '2. Proof of Address: Individual (Indian) - Voter ID or Driving Licence | Foreign National - Passport | Entity - Valid Establishment document.'],
+    [0, '3. PAN Number to be provided for Residents and Entities registered in India.'],
+    [0, '4. If minor, valid age proof to be provided.'],
+    [0, '5. Self-attested copy of Officially Valid Document as per prevailing KYC Circular applicable to Individuals i.e. ID and Address proof.'],
+    [0, '6. The address mentioned should be of Residence for Individuals.']
   ];
+
   doc.setFontSize(8.5);
   notes.forEach(function(item) {
-    if(!item[1]) { y += 3; return; }
-    y = ck(doc, y, 6);
+    if (!item[1]) { y += 3; return; }
+    y = checkPageBreak(doc, y, 6);
     doc.setFont('helvetica', item[0] ? 'bold' : 'normal');
     var ls = doc.splitTextToSize(item[1], Wc);
     doc.text(ls, L, y);
     y += ls.length * 4.3 + 1;
   });
-  addFooter(doc); return doc;
+
+  addPageFooter(doc);
+  return doc;
 }
 
-async function genDoc(n) {
-  var btn = document.getElementById('b' + n);
-  var orig = btn.textContent; btn.disabled = true; btn.textContent = 'Generating...';
+// ============================================================
+// GENERATE
+// ============================================================
+async function generateDoc(n) {
+  var btn = document.getElementById('btn' + n);
+  var orig = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Generating...';
   await new Promise(function(r) { setTimeout(r, 80); });
   try {
-    var firm = (S.firmName || 'firm').replace(/\s+/g, '_');
+    var firm = (D.firmName || 'firm').replace(/\s+/g, '_');
     var doc, name;
-    if(n===1) { doc = buildDoc1(); name = firm + '_Partner_Resolution.pdf'; }
-    else if(n===2) { doc = buildDoc2(); name = firm + '_Partner_Declaration.pdf'; }
+    if (n === 1) { doc = buildDoc1(); name = firm + '_Partner_Resolution.pdf'; }
+    else if (n === 2) { doc = buildDoc2(); name = firm + '_Partner_Declaration.pdf'; }
     else { doc = buildDoc3(); name = firm + '_BO_Declaration.pdf'; }
     doc.save(name);
     btn.textContent = 'Downloaded!';
     setTimeout(function() { btn.textContent = orig; btn.disabled = false; }, 2500);
   } catch(err) {
-    console.error(err); btn.textContent = 'Error - try again'; btn.disabled = false;
-    alert('PDF error: ' + err.message);
+    console.error(err);
+    btn.textContent = 'Error - try again';
+    btn.disabled = false;
+    alert('PDF generation error: ' + err.message);
   }
 }
 
-async function genAll() {
-  var btn = document.getElementById('ball'); btn.disabled = true; btn.textContent = 'Generating...';
+async function generateAll() {
+  var btn = document.getElementById('btnAll');
+  btn.disabled = true;
+  btn.textContent = 'Generating all 3...';
   await new Promise(function(r) { setTimeout(r, 80); });
   try {
-    var firm = (S.firmName || 'firm').replace(/\s+/g, '_');
+    var firm = (D.firmName || 'firm').replace(/\s+/g, '_');
     buildDoc1().save(firm + '_Partner_Resolution.pdf');
     await new Promise(function(r) { setTimeout(r, 400); });
     buildDoc2().save(firm + '_Partner_Declaration.pdf');
@@ -941,24 +1906,44 @@ async function genAll() {
     btn.textContent = 'All 3 Downloaded!';
     setTimeout(function() { btn.textContent = 'Download All 3 PDFs'; btn.disabled = false; }, 3000);
   } catch(err) {
-    console.error(err); btn.textContent = 'Download All 3 PDFs'; btn.disabled = false;
+    console.error(err);
+    btn.textContent = 'Download All 3 PDFs';
+    btn.disabled = false;
     alert('Error: ' + err.message);
   }
 }
 
+// ============================================================
+// INIT
+// ============================================================
 window.addEventListener('DOMContentLoaded', function() {
-  loadS(); applyS();
-  var bd = document.getElementById('boDate');
-  if(bd && !S.boDate) { var t = new Date().toISOString().split('T')[0]; bd.value = t; sv('boDate', t); }
-  if(S.partners.length === 0) {
-    _pid++; S.partners.push({id:_pid,name:'',pan:'',dob:'',address:'',pin:'',nationality:'Indian',din:'',ovd:'Voter ID',ownership:'',designation:'Partner'});
-    renderPartners(); saveS();
+  loadData();
+  applyState();
+
+  // Set today as default BO date if not set
+  if (!D.boDate) {
+    var today = new Date().toISOString().split('T')[0];
+    D.boDate = today;
+    var bd = document.getElementById('boDate');
+    if (bd) bd.value = today;
+    saveData();
+  }
+
+  // Init partners
+  if (D.partners.length === 0) {
+    D.partners.push({ id: nextPid++, name: '', pan: '', dob: '', address: '', pin: '', nationality: 'Indian', din: '', ovd: 'Voter ID', ownership: '', designation: 'Partner' });
+    renderPartners();
+    saveData();
   } else {
-    var mx = 0; S.partners.forEach(function(p) { if(p.id > mx) mx = p.id; }); _pid = mx;
+    var maxId = 0;
+    D.partners.forEach(function(p) { if (p.id > maxId) maxId = p.id; });
+    nextPid = maxId + 1;
     renderPartners();
   }
-  S.step = S.step || 0; updateUI();
-  initDrag();
+
+  D.step = D.step || 0;
+  updateStepUI();
+  setupDrag();
 });
 </script>
 </body>
