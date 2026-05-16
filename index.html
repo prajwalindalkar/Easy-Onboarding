@@ -405,9 +405,9 @@ function validate(){
   }
   if(s===2){
     if(!S.authP){alert('Select the authorised signatory.');return false;}
-    if(!S.presentNames && S.presentNames.length){alert('Select partners present at meeting.');return false;}
-    if(!S.decSignNames && S.decSignNames.length){alert('Select declaration signatories.');return false;}
-    if(!S.boSignNames && S.boSignNames.length){alert('Select BO declaration signatories.');return false;}
+    if(!S.presentNames || !S.presentNames.length){alert('Select partners present at meeting.');return false;}
+    if(!S.decSignNames || !S.decSignNames.length){alert('Select declaration signatories.');return false;}
+    if(!S.boSignNames || !S.boSignNames.length){alert('Select BO declaration signatories.');return false;}
   }
   if(s===3){if(!S.lhData){alert('Upload the merchant letterhead.');return false;}}
   return true;
